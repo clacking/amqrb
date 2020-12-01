@@ -1,0 +1,87 @@
+import { join } from 'path';
+import path from 'path';
+import os from 'os';
+import { app, BrowserWindow, ipcMain, shell, Menu, protocol } from 'electron';
+import serve from 'electron-serve';
+import Store from 'electron-store';
+import { nextServer } from './helper/nextServer';
+import { fetchAniListUserToken, fetchAniListAccsessToken, fetchUserByAccsess } from './helper/fetchAnilistUser';
+import { bootstrapAMQGame } from './helper/AMQBootstrap';
+import { callbackify } from 'util';
+
+const DEV_SERVER = process.env.NODE_ENV !== 'production';
+const appServe = serve({directory: 'build'});
+export const VideoServe = 'C:/Users/box/Downloads';
+
+let mainWindow: BrowserWindow;
+const store = new Store();
+
+ipcMain.handle('minimize', () => {
+    mainWindow.minimize();
+});
+
+ipcMain.handle('quit', () => {
+    app.exit();
+});
+
+ipcMain.handle('pageLoaded', async e => {
+    return await new Promise(resolve => {
+        const saved = store.get('savedList') || [];
+        console.log(saved)
+        resolve(saved);
+    });
+});
+
+ipcMain.handle('addBackup', async (e, arg) => {
+    if (!arg[0]) throw new Error('Invaled args');
+
+    const backups = store.get('backups') as any[];
+    store.set('backups', [...backups, arg[0]]);
+
+    return;
+});
+
+ipcMain.on('startLogin', () => {
+    shell.openExternal('https://anilist.co/api/v2/oauth/authorize?client_id=4043&redirect_uri=https://anilist.co/api/v2/oauth/pin&response_type=code');
+});
+
+ipcMain.on('windowLoaded', async (e, token) => {
+    if (!!!token[0] && !!!store.get('anilist_refresh_token')) return;
+    const {accsess_token, refresh_token} = (token[0]) ? await fetchAniListUserToken(token[0]) : await fetchAniListAccsessToken(store.get('anilist_refresh_token') as string);
+    const { id } = await fetchUserByAccsess(accsess_token);
+    store.set('anilist_refresh_token', refresh_token);
+    e.reply('reciveConfig', [accsess_token, id]);
+});
+
+async function main() {
+    await app.whenReady();
+    mainWindow = new BrowserWindow({
+        width: 1060, height: 680, minHeight: 600, minWidth: 1060, frame: true,
+        icon: __dirname + '/assets/icon.png',
+        webPreferences: { contextIsolation: true, enableRemoteModule: false, preload: join(__dirname, 'preload.js') }
+    });
+
+    // Media serve
+    protocol.registerFileProtocol('amq', (r, c) => {
+        const file = r.url.substr(6);
+        c({ path: path.join(VideoServe, file) });
+    });
+
+    let webview_page: string;
+    if (DEV_SERVER) {
+        // mainWindow.webContents.session.loadExtension(
+        //     path.join(os.homedir(), `AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.10.0_0`)
+        // );
+        mainWindow.webContents.openDevTools();
+        webview_page = await nextServer();
+    } else {
+        await appServe(mainWindow);
+        webview_page = 'app://-';
+    }
+
+    bootstrapAMQGame();
+    await mainWindow.loadURL(webview_page);
+
+}
+
+main();

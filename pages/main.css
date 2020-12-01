@@ -1,0 +1,121 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+* {
+    outline: none;
+}
+
+img, svg, video, canvas, audio, iframe, embed, object { display: inherit!important; }
+
+.App {
+    height: 100vh;
+    overflow: hidden;
+    box-shadow: 0 0 3px #488ec4;
+}
+
+.main {
+    top: 28px;
+    overflow: hidden;
+}
+
+.TabBar {
+    width: 60px;
+    height: calc(100% - 28px);
+    line-height: 28px;
+    display: flex;
+    position: fixed;
+    background: #52606b;
+}
+
+.noDrag {
+    -webkit-app-region: no-drag;
+}
+
+.midCenter {
+    display: grid;
+    place-items: center;
+}
+
+.SideList {
+    width: 30%;
+    height: 100%;
+    background: #394B59;
+}
+
+.SideHeight {
+    height: 50%;
+}
+
+.MainList {
+    width: 70%;
+    overflow: auto;
+}
+
+.updateList{
+    display: none;
+}
+
+.animeList:hover .updateList {
+    display: flex;
+    position: absolute;
+    margin-top: -100px;
+    width: 100%;
+    height: 6rem;
+}
+
+.updateButton {
+    width: 25%;
+    background: rgba(100,0,0,0.4);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    color: #fff;
+}
+
+.updateButton:hover {
+    background: rgba(100,0,0,0.8);
+}
+
+.animedata {
+    min-height: 5rem;
+}
+
+.react-tabs__tab-panel {
+    height: 100%;
+    width: 100%;
+}
+
+.top-28 {
+    top: 28px;
+}
+
+.bodyContainer {
+    top: 28px;
+    position: relative;
+    height: calc(100% - 28px);
+}
+
+.border-bottom-1 {
+    border-bottom: 1px solid;
+}
+
+.border-right-1 {
+    border-right: 1px solid;
+}
+
+.ReactModalPortal {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.ReactModal__Overlay {
+    position: absolute;
+}
+
+.react-tabs__tab--selected {
+    color: #fff!important;
+    background: #9e2e968c!important;
+    border-radius: 0!important;
+}
