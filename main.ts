@@ -7,11 +7,10 @@ import Store from 'electron-store';
 import { nextServer } from './helper/nextServer';
 import { fetchAniListUserToken, fetchAniListAccsessToken, fetchUserByAccsess } from './helper/fetchAnilistUser';
 import { bootstrapAMQGame } from './helper/AMQBootstrap';
-import { callbackify } from 'util';
+import { SETTING_PATH, VIDEO_CACHE } from './helper/AppSettings';
 
 const DEV_SERVER = process.env.NODE_ENV !== 'production';
 const appServe = serve({directory: 'build'});
-export const VideoServe = 'C:/Users/box/Downloads';
 
 let mainWindow: BrowserWindow;
 const store = new Store();
@@ -56,7 +55,7 @@ ipcMain.on('windowLoaded', async (e, token) => {
 async function main() {
     await app.whenReady();
     mainWindow = new BrowserWindow({
-        width: 1060, height: 680, minHeight: 600, minWidth: 1060, frame: true,
+        width: 1060, height: 680, minHeight: 600, minWidth: 1060, titleBarStyle: 'hidden',
         icon: __dirname + '/assets/icon.png',
         webPreferences: { contextIsolation: true, enableRemoteModule: false, preload: join(__dirname, 'preload.js') }
     });
@@ -64,7 +63,7 @@ async function main() {
     // Media serve
     protocol.registerFileProtocol('amq', (r, c) => {
         const file = r.url.substr(6);
-        c({ path: path.join(VideoServe, file) });
+        c({ path: path.join(VIDEO_CACHE, file) });
     });
 
     let webview_page: string;
