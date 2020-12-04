@@ -8,6 +8,7 @@ import { nextServer } from './helper/nextServer';
 import { fetchAniListUserToken, fetchAniListAccsessToken, fetchUserByAccsess } from './helper/fetchAnilistUser';
 import { bootstrapAMQGame } from './helper/AMQBootstrap';
 import { SETTING_PATH, VIDEO_CACHE } from './helper/AppSettings';
+import { getDatabase } from './helper/Database';
 
 const DEV_SERVER = process.env.NODE_ENV !== 'production';
 const appServe = serve({directory: 'build'});
@@ -78,6 +79,8 @@ async function main() {
         webview_page = 'app://-';
     }
 
+    const db = await getDatabase();
+    console.log(await db.aa.dump());
     bootstrapAMQGame();
     await mainWindow.loadURL(webview_page);
 
