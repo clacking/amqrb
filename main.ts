@@ -80,7 +80,6 @@ async function main() {
     }
 
     const db = await getDatabase();
-    console.log(await db.aa.dump());
     bootstrapAMQGame();
     await mainWindow.loadURL(webview_page);
 

@@ -2,7 +2,13 @@
 
 Custom [AMQ](https://animemusicquiz.com/) client.
 
-## Req
+## fearture
+
+* Game logger, analyze
+
+* media caching, don't burn the catbox
+
+## req
 
 * Latest Node.js
 
