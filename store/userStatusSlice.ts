@@ -4,7 +4,7 @@ export interface UserStatus {
     xpInfo: {
         xpPercent: number,
         xpForLevel: number,
-        xpInfoLevel: number,
+        xpIntoLevel: number,
         lastGain: number,
     },
     level: number,

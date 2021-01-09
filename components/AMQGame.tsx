@@ -31,7 +31,9 @@ const AMQGame = () => {
     useEffect(() => {
         const updateUserInfo = (e:any, d: any) => {
             console.log(e,d);
-            dispatch(userStatusSlice.actions.update({...d}));
+            const data = ({xpInfo, level, self, malName, malLastUpdate, aniList, aniListLastUpdate, kitsu, kitsuLastUpdate, credits, tickets, rhythm, avatar, settings}: UserStatus) =>
+                ({xpInfo, level, self, malName, malLastUpdate, aniList, aniListLastUpdate, kitsu, kitsuLastUpdate, credits, tickets, rhythm, avatar, settings});
+            dispatch(userStatusSlice.actions.update({...data(d)}));
         }
         window.electron.on('login complete', updateUserInfo);
 

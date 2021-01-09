@@ -88,17 +88,17 @@ const AMQStatus = () => {
                     <CharaImg className="py-4" src={img} />
                 </div>
                 <EXPProgressBar>
-                    <Tooltip label={`${state.xpInfo.xpInfoLevel|0} / ${state.xpInfo.xpForLevel}`} aria-label="A tooltip">
+                    <Tooltip label={`${state.xpInfo.xpIntoLevel|0} / ${state.xpInfo.xpForLevel}`} aria-label="A tooltip">
                         <EXPLevel>{state.level}</EXPLevel>
                     </Tooltip>
-                    <EXPProgress p={`${state.xpInfo.xpPercent}`} />
+                    <EXPProgress p={`${state.xpInfo.xpPercent * 100}`} />
                 </EXPProgressBar>
                 <div className="my-4">
                     <span className="px-2 py-1 m-2 rounded bg-blue-900"><FaTicketAlt /> {state.tickets} </span>
                     <span className="px-2 py-1 m-2 rounded bg-blue-900">♬ {state.credits}</span>
                 </div>
             </div>
-            <div className="text-sm leading-4 flex p-2 bottom-0">
+            <div className="text-sm leading-4 flex p-2 bottom-0 select-none">
                 <span><span className="text-green-400">●</span> Connected</span>
                 <span className="ml-auto inline-flex"><FaUsers /> {online}</span>
             </div>

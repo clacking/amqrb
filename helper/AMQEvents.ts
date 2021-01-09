@@ -20,6 +20,7 @@ export const AMQEventsCommand = {
     RankedScoreUpdate: 'ranked score update', // quiz?
     ForceLogOff: 'force logoff',
     UnknownError: 'unknown error',
+    RankedGameStateChange: 'ranked game state change',
     SendGameChatMessage: 'game chat message', //lobby send chat
     GameChatMessage: 'Game Chat Message', //lobby
     GetRooms: 'get rooms', // roombrowser
