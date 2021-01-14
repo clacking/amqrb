@@ -56,7 +56,7 @@ ipcMain.on('windowLoaded', async (e, token) => {
 async function main() {
     await app.whenReady();
     mainWindow = new BrowserWindow({
-        width: 1060, height: 680, minHeight: 600, minWidth: 1060, titleBarStyle: 'hidden',
+        width: 1060, height: 680, minHeight: 600, minWidth: 1060,frame: false, titleBarStyle: 'hidden',
         icon: __dirname + '/assets/icon.png',
         webPreferences: { contextIsolation: true, enableRemoteModule: false, preload: join(__dirname, 'preload.js') }
     });

@@ -23,6 +23,7 @@ export const AMQEventsCommand = {
     RankedGameStateChange: 'ranked game state change',
     SendGameChatMessage: 'game chat message', //lobby send chat
     GameChatMessage: 'Game Chat Message', //lobby
+    GameChatUpdate: 'game chat update', //lobby
     GetRooms: 'get rooms', // roombrowser
     RoomChange: 'Room Change', // roombrowser
     HostGame: 'Host Game', // roombrowser

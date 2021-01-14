@@ -4,7 +4,7 @@ import { AMQChat } from '../interface/AMQChat.interface';
 import { RoomSetting } from '../interface/AMQRoomSetting.interface';
 import { AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
 import { AMQEventsCommand } from '../helper/AMQEvents';
-const { GameChatMessage, HostGame, SpectatorChangeToPlayer,
+const { GameChatUpdate, HostGame, SpectatorChangeToPlayer,
     PlayerChangedToSpectator, JoinGame, NewPlayer, PlayerLeft }
 = AMQEventsCommand;
 import AMQQuizLobby from './AMQQuizLobby';
@@ -71,9 +71,9 @@ const AMQGameContainer = () => {
             setChat([...chat, args]);
         }
 
-        window.electron.on(GameChatMessage, msg);
+        window.electron.on(GameChatUpdate, msg);
         return () => {
-            window.electron.removeListener(GameChatMessage, msg);
+            window.electron.removeListener(GameChatUpdate, msg);
         }
     }, [chat]);
 

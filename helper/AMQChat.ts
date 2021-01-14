@@ -4,12 +4,12 @@ import { addCommandHandler, getGameSocket, coreEmitter, emitEvent } from './AMQS
 import { Logger } from './Logger';
 
 export function initializeChat () {
-    const { GameChatMessage, SendGameChatMessage } = AMQEventsCommand;
+    const { GameChatUpdate, SendGameChatMessage } = AMQEventsCommand;
     const { lobby } = AMQEventType;
     const io = getGameSocket();
 
-    addCommandHandler(GameChatMessage, (d: any) => {
-        emitEvent(GameChatMessage, d);
+    addCommandHandler(GameChatUpdate, (d: any) => {
+        emitEvent(GameChatUpdate, d);
     });
 
     coreEmitter.on(SendGameChatMessage, (d: any) => {

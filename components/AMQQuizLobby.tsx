@@ -10,14 +10,15 @@ const { lobby, quiz } = AMQEventType;
 const PlayerBox = ({p}: {p: AMQRoomPlayer}) => {
     const img = getAvatar(p.avatar);
     return (
-        <div className="flex h-24 w-1/2 bg-gray-700">
+        <div className="flex h-16 w-full bg-gray-700">
             <div className={p.ready ? 'shadow-xl' : ''}>
-                <img className="w-24 h-24 object-top rounded-full mx-auto object-cover" src={img} />
+                <img className="w-16 h-16 object-top mx-auto object-cover" src={img} />
             </div>
             <div>
-                <div className="h-1/3">{p.level}</div>
-                <div className="h-1/3">{p.name}</div>
-                <div className="h-1/3"></div>
+                <div className="justify-center text-xl">
+                    <span className="">{p.level}</span>
+                    <span className="">{p.name}</span>
+                </div>
             </div>
         </div>
     )
@@ -47,7 +48,7 @@ const AMQQuiz = ({chat, player}: {chat: AMQChat[], player: AMQRoomPlayer[]}) => 
                 <button onClick={setting}>setting</button>
             </header>
             <section className="flex flex-row flex-wrap w-full h-full p-4">
-                <div className="w-full xl:w-2/3 flex flex-wrap">
+                <div className="w-full flex flex-row flex-wrap">
                     {player.map(p => <PlayerBox p={p} key={p.gamePlayerId} />)}
                 </div>
                 <div className="px-8 h-1/2 xl:h-full w-full xl:w-1/3">

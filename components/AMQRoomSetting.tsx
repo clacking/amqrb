@@ -207,7 +207,7 @@ const AMQRoomSetting = ({isOpen, onClose}: {isOpen: boolean, onClose: any}) => {
             <ModalContent>
             <ModalCloseButton />
             <ModalBody>
-            <form className="text-center" onSubmit={form.handleSubmit}>
+            <form className="text-center text-black" onSubmit={form.handleSubmit}>
                 <h1 className="text-2xl">Create Room</h1>
                 <div>
                     <span>Solo room?</span>
