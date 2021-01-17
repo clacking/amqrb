@@ -4,8 +4,7 @@ import { RoomSetting, PublicRoomSettings, RoomChangeType } from '../interface/AM
 import { AMQAvater } from '../interface/AMQAvater.interface';
 import { AMQChat } from '../interface/AMQChat.interface';
 import { GameViewContext } from './AMQGame';
-import { AMQEventType, AMQEventsCommand } from '../helper/AMQEvents';
-const { NewRoom, RoomChange, RemoveRoombrowserListeners } = AMQEventsCommand;
+import { AMQEventType, NewRoom, RoomChange, RemoveRoombrowserListeners } from '../helper/AMQEvents';
 const { roombrowser } = AMQEventType;
 
 

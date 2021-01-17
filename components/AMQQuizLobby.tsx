@@ -1,10 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
 import { GameViewContext } from './AMQGame';
 import { getAvatar } from '../helper/AvatarImage';
-import { AMQEventsCommand, AMQEventType } from '../helper/AMQEvents';
+import { LeaveGame, StartGame, GetAllSongName, AMQEventType } from '../helper/AMQEvents';
 import { AMQChat } from '../interface/AMQChat.interface';
 import { AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
-const { LeaveGame, StartGame, GetAllSongName } = AMQEventsCommand;
 const { lobby, quiz } = AMQEventType;
 
 const PlayerBox = ({p}: {p: AMQRoomPlayer}) => {
@@ -42,10 +41,10 @@ const AMQQuiz = ({chat, player}: {chat: AMQChat[], player: AMQRoomPlayer[]}) => 
 
     return (
         <div className="relative w-full h-full">
-            <header className="flex bg-gray-700 w-full p-2 flex justify-between">
-                <button onClick={backLobby}>back</button>
-                <button onClick={start} className="bg-green-800 px-2 rounded">Start</button>
-                <button onClick={setting}>setting</button>
+            <header className="flex w-full p-2 flex justify-between">
+                <button onClick={backLobby} className="bg-gray-700 px-4 py-2 rounded">Back</button>
+                <button onClick={start} className="bg-green-800 px-4 py-2 rounded">Start</button>
+                <button onClick={setting} className="bg-gray-700 px-4 py-2 rounded">Setting</button>
             </header>
             <section className="flex flex-row flex-wrap w-full h-full p-4">
                 <div className="w-full flex flex-row flex-wrap">

@@ -7,6 +7,7 @@ import AMQStatus from './AMQStatus';
 import AMQRoom from './AMQRoom';
 import AMQQuiz from './AMQQuiz';
 import AMQGameContainer from './AMQGameContainer';
+import { LoginComplete } from '../helper/AMQEvents';
 
 const MainUI = styled.main`
     background: #0e1117;
@@ -35,10 +36,10 @@ const AMQGame = () => {
                 ({xpInfo, level, self, malName, malLastUpdate, aniList, aniListLastUpdate, kitsu, kitsuLastUpdate, credits, tickets, rhythm, avatar, settings});
             dispatch(userStatusSlice.actions.update({...data(d)}));
         }
-        window.electron.on('login complete', updateUserInfo);
+        window.electron.on(LoginComplete, updateUserInfo);
 
         return () => {
-            window.electron.removeListener('login complete', updateUserInfo);
+            window.electron.removeListener(LoginComplete, updateUserInfo);
         }
     }, [])
 

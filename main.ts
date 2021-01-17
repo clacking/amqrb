@@ -45,6 +45,7 @@ ipcMain.on('startLogin', () => {
     shell.openExternal('https://anilist.co/api/v2/oauth/authorize?client_id=4043&redirect_uri=https://anilist.co/api/v2/oauth/pin&response_type=code');
 });
 
+// Initial config
 ipcMain.on('windowLoaded', async (e, token) => {
     if (!!!token[0] && !!!store.get('anilist_refresh_token')) return;
     const {accsess_token, refresh_token} = (token[0]) ? await fetchAniListUserToken(token[0]) : await fetchAniListAccsessToken(store.get('anilist_refresh_token') as string);

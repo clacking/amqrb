@@ -1,17 +1,15 @@
 import { EventEmitter } from 'events';
-import { AMQEventsCommand, AMQEventType } from './AMQEvents';
+import { HostSoloGame, HostGame, RoomClosed, RoomSettingChanged,
+  NewPlayer, PlayerLeft, SpectatorChangeToPlayer, PlayerReadyChange,
+  GameStarting, PlayerChangedToSpectator, AvatarChange,
+  HostPromotion, SpectatorLeft, PlayerNameChange,
+  JoinTeam, ShuffleTeams, HostRoom, LeaveGame, StartGame, AMQEventType } from './AMQEvents';
 import { addCommandHandler, getGameSocket, coreEmitter, emitEvent } from './AMQSocket';
 import { Logger } from './Logger';
 
 let roomSetting = {};
 
 function initializeGameRoomHandlers () {
-    const { HostSoloGame, HostGame, RoomClosed, RoomSettingChanged,
-        NewPlayer, PlayerLeft, SpectatorChangeToPlayer, PlayerReadyChange,
-        GameStarting, PlayerChangedToSpectator, AvatarChange,
-        HostPromotion, SpectatorLeft, PlayerNameChange,
-        JoinTeam, ShuffleTeams, HostRoom, LeaveGame
-    } = AMQEventsCommand;
     const { roombrowser, lobby } = AMQEventType;
 
     // add handlers for room.
@@ -64,12 +62,6 @@ function initializeGameRoomHandlers () {
 }
 
 export function createGameRoom (setting: any, solo = false) {
-    const { HostSoloGame, HostGame, RoomClosed, RoomSettingChanged,
-            NewPlayer, PlayerLeft, SpectatorChangeToPlayer, PlayerReadyChange,
-            GameStarting, PlayerChangedToSpectator, AvatarChange,
-            HostPromotion, SpectatorLeft, PlayerNameChange,
-            JoinTeam, ShuffleTeams, HostRoom, LeaveGame, StartGame
-    } = AMQEventsCommand;
     const { roombrowser, lobby } = AMQEventType;
     const io = getGameSocket();
 

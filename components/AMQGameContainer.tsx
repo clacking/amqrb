@@ -3,10 +3,8 @@ import { GameViewContext } from './AMQGame';
 import { AMQChat } from '../interface/AMQChat.interface';
 import { RoomSetting } from '../interface/AMQRoomSetting.interface';
 import { AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
-import { AMQEventsCommand } from '../helper/AMQEvents';
-const { GameChatUpdate, HostGame, SpectatorChangeToPlayer,
-    PlayerChangedToSpectator, JoinGame, NewPlayer, PlayerLeft }
-= AMQEventsCommand;
+import { GameChatUpdate, HostGame, SpectatorChangeToPlayer,
+    PlayerChangedToSpectator, JoinGame, NewPlayer, PlayerLeft } from '../helper/AMQEvents';
 import AMQQuizLobby from './AMQQuizLobby';
 import AMQQuiz from './AMQQuiz';
 

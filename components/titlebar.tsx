@@ -25,7 +25,6 @@ const TitleBar = () => {
             <Title className="font-thin">AMQ Redbook</Title>
             <div className="noDrag cursor-pointer flex">
                 <div className="hover:bg-gray-600 px-4" onClick={_ => window.electron.invoke('minimize')}>_</div>
-                <div className="hover:bg-gray-600 px-4" onClick={_ => location.reload()}>↻</div>
                 <div className="hover:bg-red-600 px-4" onClick={_ => window.electron.invoke('quit')}>×</div>
             </div>
         </Bar>

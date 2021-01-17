@@ -11,77 +11,75 @@ export const AMQEventType = {
 }
 
 // comments mean EvenType (Sending event)
-export const AMQEventsCommand = {
-    LoginComplete: 'login complete',
-    PlayerCount: 'online player count change',
-    ServerRestart: 'server restart',
-    NewDonation: 'new donation',
-    PopoutMessage: 'popout message',
-    RankedScoreUpdate: 'ranked score update', // quiz?
-    ForceLogOff: 'force logoff',
-    UnknownError: 'unknown error',
-    RankedGameStateChange: 'ranked game state change',
-    SendGameChatMessage: 'game chat message', //lobby send chat
-    GameChatMessage: 'Game Chat Message', //lobby
-    GameChatUpdate: 'game chat update', //lobby
-    GetRooms: 'get rooms', // roombrowser
-    RoomChange: 'Room Change', // roombrowser
-    HostGame: 'Host Game', // roombrowser
-    HostRoom: 'host room', // roombrowser
-    RemoveRoombrowserListeners: 'remove roombrowser listners', // roombrowser
-    NewRoom: 'New Rooms',
-    JoinGame: 'Join Game', // lobby
-    HostSoloGame: 'host solo room', // lobby
-    ChangeGameSetting: 'change game settings', // lobby
-    StartGame: 'start game', // lobby
-    RoomSettingChanged: 'Room Settings Changed', // lobby
-    NewPlayer: 'New Player', // lobby
-    PlayerLeft: 'Player Left', // lobby
-    SpectatorChangeToPlayer: 'Spectator Change To Player', // lobby
-    PlayerReadyChange: 'Player Ready Change', // lobby
-    RoomClosed: 'game closed', // lobby
-    GameStarting: 'Game Starting', // lobby
-    PlayerChangedToSpectator: 'Player Changed To Spectator', // lobby
-    AvatarChange: 'avatar change', // lobby
-    HostPromotion: 'Host Promotion', // lobby
-    SpectatorLeft: 'Spectator Left', // lobby
-    PlayerNameChange: 'player name change', // lobby
-    JoinTeam: 'join team', // lobby
-    ShuffleTeams: 'shuffle teams', // lobby
-    LeaveGame: 'leave game', // lobby
-    GetAllSongName: 'get all song names', //quiz
-    QuizNextVideoInfo: 'quiz next video info', //quiz
-    QuizReady: 'quiz ready', //quiz
-    QuizOver: 'quiz over', //quiz
-    SendFeedback: 'send feedback', //quiz
-    QuizWaitingBuffering: 'quiz waiting buffering',
-    VideoReady: 'video ready', // quiz
-    PlayNextSong: 'play next song',
-    QuizAnswer: 'quiz answer', // quiz
-    QuizXpCreditGain: 'quiz xp credit gain', //quiz
-    RejoiningPlayer: 'Rejoining Player', // quiz ranked
-    PlayerAnswered: 'player answered',
-    QuizSkipMessage: 'quiz skip message', //quiz
-    QuizOverlayMessage: 'quiz overlay message', //quiz
-    QuizPauseTriggered: 'quiz pause triggered', //quiz
-    ReturnLobbyVoteStart: 'return lobby vote start', //quiz
-    SkipVote: 'skip vote', // quiz
-    QuizUnpauseTriggered: 'quiz unpause triggered', //quiz
-    QuizNoPlayers: 'quiz no players', //quiz
-    QuizFatalError: 'quiz fatal error', //quiz
-    GuessPhaseOver: 'guess phase over', //quiz
-    PlayerAnswers: 'player answers', //quiz
-    QuizEndResult: 'quiz end result', //quiz
-    AnswerResults: 'answer results', //quiz
-    TeamMemberAnswer: 'team member answer', //quiz
-    StartReturnLobbyVote: 'start return lobby vote', // quiz
-    ReturnLobbyVoteResult: 'return lobby vote result', //quiz
-    JoinRankedGame: 'join ranked game', //roombrowser
-    // Library
-    ExpandLibrary: 'expandLibrary questions', // library
-    ExpandLibraryClose: 'expandLibrary closed', // library
-    // Social
-    GetLeaderboard: 'get leaderboard level entries', // social
-    StopLeaderboard: 'stop leaderboard listning', // social
-}
+export const LoginComplete = 'login complete';
+export const PlayerCount = 'online player count change';
+export const ServerRestart = 'server restart';
+export const NewDonation = 'new donation';
+export const PopoutMessage = 'popout message';
+export const RankedScoreUpdate = 'ranked score update'; // quiz?
+export const ForceLogOff = 'force logoff';
+export const UnknownError = 'unknown error';
+export const RankedGameStateChange = 'ranked game state change';
+export const SendGameChatMessage = 'game chat message'; //lobby send chat
+export const GameChatMessage = 'Game Chat Message'; //lobby
+export const GameChatUpdate = 'game chat update'; //lobby
+export const GetRooms = 'get rooms'; // roombrowser
+export const RoomChange = 'Room Change'; // roombrowser
+export const HostGame = 'Host Game'; // roombrowser
+export const HostRoom = 'host room'; // roombrowser
+export const RemoveRoombrowserListeners = 'remove roombrowser listners'; // roombrowser
+export const NewRoom = 'New Rooms';
+export const JoinGame = 'Join Game'; // lobby
+export const HostSoloGame = 'host solo room'; // lobby
+export const ChangeGameSetting = 'change game settings'; // lobby
+export const StartGame = 'start game'; // lobby
+export const RoomSettingChanged = 'Room Settings Changed'; // lobby
+export const NewPlayer = 'New Player'; // lobby
+export const PlayerLeft = 'Player Left'; // lobby
+export const SpectatorChangeToPlayer = 'Spectator Change To Player'; // lobby
+export const PlayerReadyChange = 'Player Ready Change'; // lobby
+export const RoomClosed = 'game closed'; // lobby
+export const GameStarting = 'Game Starting'; // lobby
+export const PlayerChangedToSpectator = 'Player Changed To Spectator'; // lobby
+export const AvatarChange = 'avatar change'; // lobby
+export const HostPromotion = 'Host Promotion'; // lobby
+export const SpectatorLeft = 'Spectator Left'; // lobby
+export const PlayerNameChange = 'player name change'; // lobby
+export const JoinTeam = 'join team'; // lobby
+export const ShuffleTeams = 'shuffle teams'; // lobby
+export const LeaveGame = 'leave game'; // lobby
+export const QuizNoSongs = 'Quiz no songs'; // quiz
+export const GetAllSongName = 'get all song names'; //quiz
+export const QuizNextVideoInfo = 'quiz next video info'; //quiz
+export const QuizReady = 'quiz ready'; //quiz
+export const QuizOver = 'quiz over'; //quiz
+export const SendFeedback = 'send feedback'; //quiz
+export const QuizWaitingBuffering = 'quiz waiting buffering';
+export const VideoReady = 'video ready'; // quiz
+export const PlayNextSong = 'play next song';
+export const QuizAnswer = 'quiz answer'; // quiz
+export const QuizXpCreditGain = 'quiz xp credit gain'; //quiz
+export const RejoiningPlayer = 'Rejoining Player'; // quiz ranked
+export const PlayerAnswered = 'player answered';
+export const QuizSkipMessage = 'quiz skip message'; //quiz
+export const QuizOverlayMessage = 'quiz overlay message'; //quiz
+export const QuizPauseTriggered = 'quiz pause triggered'; //quiz
+export const ReturnLobbyVoteStart = 'return lobby vote start'; //quiz
+export const SkipVote = 'skip vote'; // quiz
+export const QuizUnpauseTriggered = 'quiz unpause triggered'; //quiz
+export const QuizNoPlayers = 'quiz no players'; //quiz
+export const QuizFatalError = 'quiz fatal error'; //quiz
+export const GuessPhaseOver = 'guess phase over'; //quiz
+export const PlayerAnswers = 'player answers'; //quiz
+export const QuizEndResult = 'quiz end result'; //quiz
+export const AnswerResults = 'answer results'; //quiz
+export const TeamMemberAnswer = 'team member answer'; //quiz
+export const StartReturnLobbyVote = 'start return lobby vote'; // quiz
+export const ReturnLobbyVoteResult = 'return lobby vote result'; //quiz
+export const JoinRankedGame = 'join ranked game'; //roombrowser
+export const ExpandLibrary = 'expandLibrary questions'; // library
+export const ExpandLibraryClose = 'expandLibrary closed'; // library
+export const GetLeaderboard = 'get leaderboard level entries'; // social
+export const StopLeaderboard = 'stop leaderboard listning'; // social
+
 

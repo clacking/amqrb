@@ -2,7 +2,8 @@
  * Custom AMQ Client state manager.
  */
 import fetch from 'node-fetch';
-import { AMQEventsCommand, AMQEventType } from './AMQEvents';
+import { LoginComplete, PlayerCount, ServerRestart, PopoutMessage,
+    GetRooms, HostRoom, HostSoloGame, AMQEventType } from './AMQEvents';
 import { UserState } from './AMQ.interface';
 import { addCommandHandler, initilizeGameSocket, emitEvent, coreEmitter, getGameSocket } from './AMQSocket';
 import { Logger } from './Logger';
@@ -55,7 +56,6 @@ export function initializeAMQGame (port: number|string, token: string) {
     initilizeGameSocket(port, token);
 
     // Add game handlers
-    const { LoginComplete, PlayerCount, ServerRestart, PopoutMessage } = AMQEventsCommand;
     addCommandHandler(LoginComplete, (d: any) => {
         gameInfo = d;
         Logger.info('Succsessfully logged in to Game.');
@@ -76,7 +76,6 @@ export function initializeAMQGame (port: number|string, token: string) {
 
 function userEventHandler(d: any) {
     const io = getGameSocket();
-    const { GetRooms, HostRoom, HostSoloGame } = AMQEventsCommand;
 
     if (d.command === GetRooms) {
         browseRooms();

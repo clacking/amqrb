@@ -2,9 +2,8 @@ import styled from 'styled-components';
 import { useState, useContext } from 'react';
 import AMQRoomSetting from './AMQRoomSetting';
 import { GameViewContext } from './AMQGame';
-import { AMQEventType, AMQEventsCommand } from '../helper/AMQEvents';
+import { AMQEventType, GetRooms, JoinRankedGame } from '../helper/AMQEvents';
 const { roombrowser } = AMQEventType;
-const { GetRooms, JoinRankedGame } = AMQEventsCommand;
 
 const SelectUI = styled.section`
     z-index: 11;
