@@ -20,7 +20,7 @@ img, svg, video, canvas, audio, iframe, embed, object { display: inherit!importa
 }
 
 .TabBar {
-    width: 60px;
+    width: 66px;
     height: calc(100% - 28px);
     line-height: 28px;
     display: flex;

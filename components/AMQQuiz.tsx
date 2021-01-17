@@ -28,8 +28,7 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
         return () => window.electron.removeListener(QuizAnswer, checkAnswer);
     });
 
-    const submitAnswer = (e?: React.KeyboardEvent<HTMLInputElement>) => {
-        if (!e) return;
+    const submitAnswer = (e: React.KeyboardEvent<HTMLInputElement>) => {
         e.preventDefault();
         if (e.key === 'Enter')
         window.electron.send('amqEmit', {
@@ -45,9 +44,9 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
     }
 
     return (
-        <div className="flex flex-col">
-            <button onClick={submitSkip}>Skip</button>
-            <input type="text" value={answer} onChange={e=>setAnswer(e.target.value)} onKeyPress={submitAnswer} />
+        <div className="flex flex-row">
+            <button onClick={submitSkip}>{skip?'✅':''} Skip</button>
+            <input className="flex-grow" type="text" value={answer} onChange={e=>setAnswer(e.target.value)} onKeyPress={submitAnswer} />
             <button>Copy</button>
         </div>
     )

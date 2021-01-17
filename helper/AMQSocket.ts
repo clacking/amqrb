@@ -51,7 +51,7 @@ export const initilizeGameSocket = (port: string|number, token: string): SocketI
 
     sio.on('command', (d: any) => {
         const { command, data } = d;
-        const logString = JSON.stringify(data);
+        const logString = JSON.stringify(data) || '';
         Logger.info('command recived: %o %o', command, logString.length<200 ? logString : logString.slice(0,200));
         const handler = commands.get(command);
         if (handler) handler(data);
@@ -61,7 +61,12 @@ export const initilizeGameSocket = (port: string|number, token: string): SocketI
     return sio;
 }
 
-export const addCommandHandler = (event: string, cb: Function) => {
+export const addCommandHandler = (event: string) => {
+    if (commands.get(event)) Logger.info('Command %s already existed. Overriding.', event);
+    commands.set(event, (data: any) => emitEvent(event, data));
+}
+
+export const addCustomCommandHandler = (event: string, cb: Function) => {
     if (commands.get(event)) Logger.info('Command %s already existed. Overriding.', event);
     commands.set(event, cb);
 }

@@ -4,6 +4,7 @@ import { FaUsers, FaTicketAlt, FaRegSun } from 'react-icons/fa';
 import { Tooltip } from "@chakra-ui/react"
 import { useUserStatus } from '../store/selectors';
 import { getAvatar } from '../helper/AvatarImage';
+import { PlayerCount } from '../helper/AMQEvents';
 
 const StatusUI = styled.aside`
     width: 250px;
@@ -52,10 +53,10 @@ const AMQStatus = () => {
     const [connection, setConnection] = useState(false);
 
     useEffect(() => {
-        const update = (e: any, d: any) => setOnline(d);
-        window.electron.on('online player count change', update);
+        const update = (e: any, d: {count: number}) => setOnline(d.count);
+        window.electron.on(PlayerCount, update);
 
-        return () => window.electron.removeListener('online player count change', update);
+        return () => window.electron.removeListener(PlayerCount, update);
     }, [online]);
 
     useEffect(() => {

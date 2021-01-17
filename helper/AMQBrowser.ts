@@ -7,13 +7,8 @@ export function browseRooms () {
     const { roombrowser } = AMQEventType;
 
     const io = getGameSocket();
-
-    addCommandHandler(NewRoom, (d: any) => {
-        emitEvent(NewRoom, d);
-    });
-    addCommandHandler(RoomChange, (d: any) => {
-        emitEvent(RoomChange, d);
-    });
+    const events = [NewRoom, RoomChange];
+    events.forEach(s => addCommandHandler(s));
 
     coreEmitter.on(RemoveRoombrowserListeners, () => {
         io.emit('command', { type: roombrowser, command: RemoveRoombrowserListeners });

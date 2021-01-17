@@ -1,9 +1,9 @@
 import { EventEmitter } from 'events';
 import { HostSoloGame, HostGame, RoomClosed, RoomSettingChanged,
-  NewPlayer, PlayerLeft, SpectatorChangeToPlayer, PlayerReadyChange,
-  GameStarting, PlayerChangedToSpectator, AvatarChange,
-  HostPromotion, SpectatorLeft, PlayerNameChange,
-  JoinTeam, ShuffleTeams, HostRoom, LeaveGame, StartGame, AMQEventType } from './AMQEvents';
+    NewPlayer, PlayerLeft, SpectatorChangeToPlayer, PlayerReadyChange,
+    GameStarting, PlayerChangedToSpectator, AvatarChange,
+    HostPromotion, SpectatorLeft, PlayerNameChange,
+    JoinTeam, ShuffleTeams, HostRoom, LeaveGame, StartGame, AMQEventType } from './AMQEvents';
 import { addCommandHandler, getGameSocket, coreEmitter, emitEvent } from './AMQSocket';
 import { Logger } from './Logger';
 
@@ -11,54 +11,15 @@ let roomSetting = {};
 
 function initializeGameRoomHandlers () {
     const { roombrowser, lobby } = AMQEventType;
+    const roomEvents = [
+        HostSoloGame, HostGame, RoomClosed, RoomSettingChanged,
+        NewPlayer, PlayerLeft, SpectatorChangeToPlayer, PlayerReadyChange,
+        GameStarting, PlayerChangedToSpectator, AvatarChange,
+        HostPromotion, SpectatorLeft, PlayerNameChange,
+        JoinTeam, ShuffleTeams, HostRoom, LeaveGame, StartGame
+    ];
 
-    // add handlers for room.
-    addCommandHandler(HostGame, (d: any) => {
-        roomSetting = d;
-        emitEvent(HostGame, d);
-    });
-    addCommandHandler(RoomClosed, (d: any) => {
-        emitEvent(RoomClosed, d);
-    });
-    addCommandHandler(RoomSettingChanged, (d: any) => {
-        emitEvent(RoomSettingChanged, d);
-    });
-    addCommandHandler(NewPlayer, (d: any) => {
-        emitEvent(NewPlayer, d);
-    });
-    addCommandHandler(PlayerLeft, (d: { player: { name: string, gamePlayerId: number } }) => {
-        emitEvent(PlayerLeft, d);
-    });
-    addCommandHandler(SpectatorChangeToPlayer, (d: any) => {
-        emitEvent(SpectatorChangeToPlayer, d);
-    });
-    addCommandHandler(PlayerReadyChange, (d: any) => {
-        emitEvent(PlayerReadyChange, d);
-    });
-    addCommandHandler(GameStarting, (d: any) => {
-        emitEvent(GameStarting, d);
-    });
-    addCommandHandler(PlayerChangedToSpectator, (d: any) => {
-        emitEvent(PlayerChangedToSpectator, d);
-    });
-    addCommandHandler(AvatarChange, (d: any) => {
-        emitEvent(AvatarChange, d);
-    });
-    addCommandHandler(HostPromotion, (d: any) => {
-        emitEvent(HostPromotion, d);
-    });
-    addCommandHandler(SpectatorLeft, (d: any) => {
-        emitEvent(SpectatorLeft, d);
-    });
-    addCommandHandler(PlayerNameChange, (d: any) => {
-        emitEvent(PlayerNameChange, d);
-    });
-    addCommandHandler(JoinTeam, (d: any) => {
-        emitEvent(JoinTeam, d);
-    });
-    addCommandHandler(ShuffleTeams, (d: any) => {
-        emitEvent(ShuffleTeams, d);
-    });
+    roomEvents.forEach(s => addCommandHandler(s));
 }
 
 export function createGameRoom (setting: any, solo = false) {
@@ -66,52 +27,15 @@ export function createGameRoom (setting: any, solo = false) {
     const io = getGameSocket();
 
     // add handlers for room.
-    addCommandHandler(HostGame, (d: any) => {
-        roomSetting = d;
-        emitEvent(HostGame, d);
-    });
-    addCommandHandler(RoomClosed, (d: any) => {
-        emitEvent(RoomClosed, d);
-    });
-    addCommandHandler(RoomSettingChanged, (d: any) => {
-        emitEvent(RoomSettingChanged, d);
-    });
-    addCommandHandler(NewPlayer, (d: any) => {
-        emitEvent(NewPlayer, d);
-    });
-    addCommandHandler(PlayerLeft, (d: { player: { name: string, gamePlayerId: number } }) => {
-        emitEvent(PlayerLeft, d);
-    });
-    addCommandHandler(SpectatorChangeToPlayer, (d: any) => {
-        emitEvent(SpectatorChangeToPlayer, d);
-    });
-    addCommandHandler(PlayerReadyChange, (d: any) => {
-        emitEvent(PlayerReadyChange, d);
-    });
-    addCommandHandler(GameStarting, (d: any) => {
-        emitEvent(GameStarting, d);
-    });
-    addCommandHandler(PlayerChangedToSpectator, (d: any) => {
-        emitEvent(PlayerChangedToSpectator, d);
-    });
-    addCommandHandler(AvatarChange, (d: any) => {
-        emitEvent(AvatarChange, d);
-    });
-    addCommandHandler(HostPromotion, (d: any) => {
-        emitEvent(HostPromotion, d);
-    });
-    addCommandHandler(SpectatorLeft, (d: any) => {
-        emitEvent(SpectatorLeft, d);
-    });
-    addCommandHandler(PlayerNameChange, (d: any) => {
-        emitEvent(PlayerNameChange, d);
-    });
-    addCommandHandler(JoinTeam, (d: any) => {
-        emitEvent(JoinTeam, d);
-    });
-    addCommandHandler(ShuffleTeams, (d: any) => {
-        emitEvent(ShuffleTeams, d);
-    });
+    const roomEvents = [
+        HostSoloGame, HostGame, RoomClosed, RoomSettingChanged,
+        NewPlayer, PlayerLeft, SpectatorChangeToPlayer, PlayerReadyChange,
+        GameStarting, PlayerChangedToSpectator, AvatarChange,
+        HostPromotion, SpectatorLeft, PlayerNameChange,
+        JoinTeam, ShuffleTeams, HostRoom, LeaveGame, StartGame
+    ];
+
+    roomEvents.forEach(s => addCommandHandler(s));
 
     // User event
     coreEmitter.on(LeaveGame, () => {

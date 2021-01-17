@@ -7,9 +7,7 @@ export function initializeChat () {
     const { lobby } = AMQEventType;
     const io = getGameSocket();
 
-    addCommandHandler(GameChatUpdate, (d: any) => {
-        emitEvent(GameChatUpdate, d);
-    });
+    addCommandHandler(GameChatUpdate);
 
     coreEmitter.on(SendGameChatMessage, (d: any) => {
         io.emit('command',

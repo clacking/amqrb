@@ -4,7 +4,7 @@
 import Electron from 'electron';
 import { AMQEventsCommand } from './helper/AMQEvents';
 import { UserStatus } from './store/userStatusSlice';
-import { AMQEventsCommand, AMQEventCommands, LoginComplete } from './helper/AMQEvents';
+import { AMQEventsCommand, AMQEventCommands, LoginComplete, PlayerCount } from './helper/AMQEvents';
 
 declare global {
     interface Window {
@@ -21,4 +21,5 @@ declare global {
 
 interface AMQGameReciveEvents {
     [LoginComplete]: (e: IpcRendererEvent, data: UserStatus) => void;
+    [PlayerCount]: (e: IpcRendererEvent, data: {count: number}) => void;
 }

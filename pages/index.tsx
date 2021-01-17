@@ -10,9 +10,9 @@ import AMQIndex from '../components/AMQIndex';
 
 const Main = styled.main`
     position: absolute;
-    left: 60px;
+    left: 66px;
     height: 100%;
-    width: calc(100% - 60px);
+    width: calc(100% - 66px);
 `;
 
 // TODO: clean css

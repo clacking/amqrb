@@ -54,23 +54,14 @@ let gameInfo: Partial<UserState> = {};
  */
 export function initializeAMQGame (port: number|string, token: string) {
     initilizeGameSocket(port, token);
+    const events = [
+        LoginComplete, PlayerCount, ServerRestart, PopoutMessage
+    ];
 
     // Add game handlers
-    addCommandHandler(LoginComplete, (d: any) => {
-        gameInfo = d;
-        Logger.info('Succsessfully logged in to Game.');
-        emitEvent(LoginComplete, d);
-    });
-    addCommandHandler(PlayerCount, (d: {count: number}) => {
-        playerCount = d.count;
-        emitEvent(PlayerCount, playerCount);
-    });
-    addCommandHandler(ServerRestart, (d: {msg: string, time: number}) => {
-        emitEvent(ServerRestart, d);
-    });
-    addCommandHandler(PopoutMessage, (d: any) => {
-        emitEvent(PopoutMessage, d);
-    });
+    events.forEach(s => addCommandHandler(s));
+
+    coreEmitter.on(LoginComplete, () => Logger.info('Logged in to AMQ game.'));
     coreEmitter.on('userEvent', userEventHandler);
 }
 
