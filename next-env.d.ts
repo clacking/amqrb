@@ -1,10 +1,13 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
 
-import Electron from 'electron';
+import Electron, { IpcRendererEvent } from 'electron';
 import { AMQEventsCommand } from './helper/AMQEvents';
 import { UserStatus } from './store/userStatusSlice';
-import { AMQEventsCommand, AMQEventCommands, LoginComplete, PlayerCount } from './helper/AMQEvents';
+import {
+    AMQEventsCommand, AMQEventCommands, LoginComplete, PlayerCount, GetAllSongName,
+} from './helper/AMQEvents';
+import { AllSong } from './interface/AMQQuiz.interface';
 
 declare global {
     interface Window {
@@ -22,4 +25,5 @@ declare global {
 interface AMQGameReciveEvents {
     [LoginComplete]: (e: IpcRendererEvent, data: UserStatus) => void;
     [PlayerCount]: (e: IpcRendererEvent, data: {count: number}) => void;
+    [GetAllSongName]: (e: IpcRendererEvent, data: AllSong) => void;
 }

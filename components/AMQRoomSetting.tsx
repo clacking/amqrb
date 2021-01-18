@@ -264,7 +264,7 @@ const AMQRoomSetting = ({isOpen, onClose, editable}:
             setting.roomName = 'Solo';
             setting.gameMode = 'Solo';
             setting.roomSize = 1;
-            setting.privateRoom = true;
+            setting.privateRoom = false;
         }
         changeView('lobby');
         window.electron.send('amqEmit', {

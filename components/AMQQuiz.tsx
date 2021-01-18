@@ -8,6 +8,7 @@ import { GameStarting, QuizOver, RejoiningPlayer, SpectatorLeft, QuizNextVideoIn
     QuizPauseTriggered, ReturnLobbyVoteResult, TeamMemberAnswer, GetAllSongName, QuizAnswer, AMQEventType, SkipVote } from '../helper/AMQEvents';
 const { quiz } = AMQEventType;
 import { AMQInGamePlayer } from '../interface/AMQRoom.interface';
+import { AllSong } from '../interface/AMQQuiz.interface';
 
 const PlayerList = () => {}
 
@@ -30,10 +31,11 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
 
     const submitAnswer = (e: React.KeyboardEvent<HTMLInputElement>) => {
         e.preventDefault();
-        if (e.key === 'Enter')
-        window.electron.send('amqEmit', {
-            command: QuizAnswer, type: quiz, data: { answer, isPlaying: true, volumeAtMax: false }
-        });
+        if (e.key === 'Enter') {
+            window.electron.send('amqEmit', {
+                command: QuizAnswer, type: quiz, data: { answer, isPlaying: true, volumeAtMax: false }
+            });
+        }
     }
 
     const submitSkip = () => {
@@ -68,8 +70,8 @@ const AMQQuiz = ({chat}: {chat: AMQChat[]}) => {
 
     // Initialize song list
     useEffect(() => {
-        const song = (e: any, arg: any) => {
-            setSongs(arg);
+        const song = (e: any, arg: AllSong) => {
+            setSongs(arg.names);
         }
         window.electron.on(GetAllSongName, song);
 
