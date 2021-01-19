@@ -61,7 +61,7 @@ function MainPage() {
                 <Tab className="px-2 text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
                     <BsPieChartFill style={icon} />
                 </Tab>
-                <div className="text-center text-gray-400 absolute bottom-0 w-full font-light">
+                <div className="text-center text-gray-400 absolute bottom-0 w-full font-light select-none">
                     0.0.1
                 </div>
             </TabList>

@@ -4,9 +4,12 @@ import { QuizOver, SendFeedback, PlayerLeft, RejoiningPlayer,
     AnswerResults, QuizEndResult, QuizWaitingBuffering, QuizXpCreditGain,
     QuizNoPlayers, PlayerAnswered, QuizOverlayMessage, QuizSkipMessage,
     ReturnLobbyVoteStart, GuessPhaseOver, QuizFatalError, PlayerNameChange,
-    QuizPauseTriggered, QuizUnpauseTriggered, ReturnLobbyVoteResult, TeamMemberAnswer, AMQEventType } from './AMQEvents';
+    QuizPauseTriggered, QuizUnpauseTriggered, ReturnLobbyVoteResult, TeamMemberAnswer, AMQEventType,
+    GameStarting,
+} from './AMQEvents';
 import { addCommandHandler, getGameSocket, coreEmitter, emitEvent } from './AMQSocket';
 import { Logger } from './Logger';
+import { NextVideoInfo } from '../interface/AMQQuiz.interface';
 
 export function quizGame () {
     const { quiz } = AMQEventType;
@@ -22,6 +25,14 @@ export function quizGame () {
 
     quizEvents.forEach(s => {
         addCommandHandler(s);
+    });
+
+    // quiz injections
+    coreEmitter.on(GameStarting, () => {
+        // load songs
+        coreEmitter.on(QuizNextVideoInfo, (d: NextVideoInfo) => {
+            const sontId = d.videoInfo.id;
+        });
     });
 
 }

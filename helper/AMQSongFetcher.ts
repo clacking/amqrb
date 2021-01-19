@@ -1,5 +1,7 @@
 import fetch from 'node-fetch';
 import { writeFile } from 'fs/promises';
+import { join } from 'path';
+import { VIDEO_CACHE } from './AppSettings';
 
 const musicLink = (id: number | string) => `https://animemusicquiz.com/moeVideo.webm?id=${id}`;
 
@@ -16,9 +18,11 @@ export async function fetchSong (id: number | string, jar: string): Promise<stri
                 'cookie': jar
             }
         });
-        const file = await res.arrayBuffer();
+        const file = await res.buffer();
+        const storePath = join(VIDEO_CACHE, `${id}.webm`);
+        await writeFile(storePath, file);
 
-        return res.url;
+        return storePath;
     } catch (e) {
         console.error(e);
         throw new Error('Failed to fetch music link.');

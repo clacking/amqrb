@@ -194,7 +194,7 @@ const Form = ({submit}: {submit: (val: RoomSetting, solo: boolean) => void}) => 
             </div>
             <div>
                 Password
-                <input className="p-2 border" id="text-input" placeholder="Password" name="password" value={form.values.password} onChange={form.handleChange} type="text" />
+                <input className="p-2 border" id="text-input" placeholder="Set to private room" name="password" value={form.values.password} onChange={form.handleChange} type="text" />
             </div>
             <div>
                 <p>Room size</p>
