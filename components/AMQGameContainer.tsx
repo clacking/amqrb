@@ -33,19 +33,15 @@ const AMQGameContainer = () => {
             setTeamMap(teamFullMap);
         }
 
-        window.electron.on(HostGame, setup);
-        window.electron.on(JoinGame, setup);
-        return () => {
-            window.electron.removeListener(HostGame, setup);
-            window.electron.removeListener(JoinGame, setup);
-        }
+        window.electron.once(HostGame, setup);
+        window.electron.once(JoinGame, setup);
     }, []);
 
     useEffect(() => {
         const changeToSpect = (e: any, arg: any) => {}
         const changeToPlayer = (e: any, arg: any) => {}
-        window.electron.on(SpectatorChangeToPlayer, changeToPlayer);
-        window.electron.on(PlayerChangedToSpectator, changeToSpect);
+        window.electron.once(SpectatorChangeToPlayer, changeToPlayer);
+        window.electron.once(PlayerChangedToSpectator, changeToSpect);
 
         const newPlayer = (e: any, arg: any) => {
             setPlayer([...player, arg]);
@@ -53,15 +49,8 @@ const AMQGameContainer = () => {
         const leftPlayer = (e: any, arg: any) => {
             setPlayer(player.filter(p => p.name!==arg.player.name));
         }
-        window.electron.on(NewPlayer, newPlayer);
-        window.electron.on(PlayerLeft, leftPlayer);
-
-        return () => {
-            window.electron.removeListener(SpectatorChangeToPlayer, changeToPlayer);
-            window.electron.removeListener(PlayerChangedToSpectator, changeToSpect);
-            window.electron.removeListener(NewPlayer, newPlayer);
-            window.electron.removeListener(PlayerLeft, leftPlayer);
-        }
+        window.electron.once(NewPlayer, newPlayer);
+        window.electron.once(PlayerLeft, leftPlayer);
     }, [spect, player]);
     
     useEffect(() => {
@@ -69,10 +58,7 @@ const AMQGameContainer = () => {
             setChat([...chat, args]);
         }
 
-        window.electron.on(GameChatUpdate, msg);
-        return () => {
-            window.electron.removeListener(GameChatUpdate, msg);
-        }
+        window.electron.once(GameChatUpdate, msg);
     }, [chat]);
 
     if (!setting) return <span>...</span>

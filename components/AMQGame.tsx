@@ -36,11 +36,7 @@ const AMQGame = () => {
                 ({xpInfo, level, self, malName, malLastUpdate, aniList, aniListLastUpdate, kitsu, kitsuLastUpdate, credits, tickets, rhythm, avatar, settings});
             dispatch(userStatusSlice.actions.update({...data(d)}));
         }
-        window.electron.on(LoginComplete, updateUserInfo);
-
-        return () => {
-            window.electron.removeListener(LoginComplete, updateUserInfo);
-        }
+        window.electron.once(LoginComplete, updateUserInfo);
     }, [])
 
     return (

@@ -27,7 +27,7 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
         window.electron.on(QuizAnswer, checkAnswer);
 
         return () => window.electron.removeListener(QuizAnswer, checkAnswer);
-    });
+    }, [answerCheck]);
 
     const submitAnswer = (e: React.KeyboardEvent<HTMLInputElement>) => {
         e.preventDefault();

@@ -10,6 +10,13 @@ export const AMQEventType = {
     social: 'social',
 }
 
+// event types
+export const lobby = 'lobby';
+export const roombrowser = 'roombrowser';
+export const quiz = 'quiz';
+export const library = 'library';
+export const social = 'social';
+
 // comments mean EvenType (Sending event)
 export const LoginComplete = 'login complete';
 export const PlayerCount = 'online player count change';

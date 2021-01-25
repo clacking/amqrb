@@ -10,6 +10,8 @@ import { QuizOver, SendFeedback, PlayerLeft, RejoiningPlayer,
 import { addCommandHandler, getGameSocket, coreEmitter, emitEvent } from './AMQSocket';
 import { Logger } from './Logger';
 import { NextVideoInfo } from '../interface/AMQQuiz.interface';
+import { fetchSong } from './AMQSongFetcher';
+import { CookieJar } from './AMQCore';
 
 export function quizGame () {
     const { quiz } = AMQEventType;
@@ -30,8 +32,11 @@ export function quizGame () {
     // quiz injections
     coreEmitter.on(GameStarting, () => {
         // load songs
-        coreEmitter.on(QuizNextVideoInfo, (d: NextVideoInfo) => {
-            const sontId = d.videoInfo.id;
+        coreEmitter.on(QuizNextVideoInfo, async (d: NextVideoInfo) => {
+            if (!CookieJar) throw new Error('No cookie.');
+            const songId = d.videoInfo.id;
+
+            const song = await fetchSong(songId, CookieJar);
         });
     });
 

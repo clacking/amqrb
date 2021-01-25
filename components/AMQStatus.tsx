@@ -47,30 +47,47 @@ const EXPProgress = styled.div<{p: string}>`
     z-index: 3;
 `;
 
-const AMQStatus = () => {
-    const { state, loading, error } = useUserStatus();
+type Connection = 'connected' | 'disconnected' | 'reconnecting';
+const ConnectionStatus = () => {
+    const [connection, setConnection] = useState<Connection>('connected');
+    useEffect(() => {
+        const discon = (e: any, d: any) => setConnection('disconnected');
+        const con = (e: any, d: any) => setConnection('connected');
+
+        window.electron.once('disconnect', discon);
+        window.electron.once('reconnect', con);
+    });
+
+    return connection === 'connected' ? (
+        <span>
+            <span className="text-green-400">●</span> Connected
+        </span>
+    ) : connection === 'disconnected' ? (
+        <span>
+            <span className="text-red-400">×</span> Disconnected
+        </span>
+    ) : (
+        <span>
+            <span className="text-yellow-400">●</span> Reconnecting
+        </span>
+    );
+}
+
+const OnlineCounter = () => {
     const [online, setOnline] = useState(0);
-    const [connection, setConnection] = useState(false);
 
     useEffect(() => {
         const update = (e: any, d: {count: number}) => setOnline(d.count);
-        window.electron.on(PlayerCount, update);
+        window.electron.once(PlayerCount, update);
+    });
 
-        return () => window.electron.removeListener(PlayerCount, update);
-    }, [online]);
+    return (
+        <span className="ml-auto inline-flex"><FaUsers /> {online}</span>
+    );
+}
 
-    useEffect(() => {
-        const discon = (e: any, d: any) => setConnection(false);
-        const con = (e: any, d: any) => setConnection(true);
-
-        window.electron.on('disconnect', discon);
-        window.electron.on('reconnect', con);
-
-        return () => {
-            window.electron.removeListener('disconnect', discon);
-            window.electron.removeListener('reconnect', con);
-        }
-    }, [connection]);
+const AMQStatus = () => {
+    const { state, loading, error } = useUserStatus();
 
     if (loading) return <StatusUI className="w-full h-full m-auto">loading</StatusUI>;
 
@@ -100,8 +117,8 @@ const AMQStatus = () => {
                 </div>
             </div>
             <div className="text-sm leading-4 flex p-2 bottom-0 select-none">
-                <span><span className="text-green-400">●</span> Connected</span>
-                <span className="ml-auto inline-flex"><FaUsers /> {online}</span>
+                <ConnectionStatus />
+                <OnlineCounter />
             </div>
         </StatusUI>
     )

@@ -17,6 +17,8 @@ declare global {
             on <E extends keyof AMQGameReciveEvents>(channel: E, callback: AMQGameReciveEvents[E]);
             on <E extends keyof AMQGameReciveEvents>(channel: E, ...args: Parameters<AMQGameReciveEvents[E]>);
             on (channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void);
+            once <E extends keyof AMQGameReciveEvents>(channel: E, callback: AMQGameReciveEvents[E]);
+            once (channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void);
             removeListener (channel: string, listener: (...listener: any[])=>void);
         }
     }

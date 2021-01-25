@@ -10,8 +10,12 @@ import { Logger } from './Logger';
 import { createGameRoom } from './AMQRoom';
 import { browseRooms } from './AMQBrowser';
 import { initializeChat } from './AMQChat';
+import { ipcMain } from 'electron';
 
 const AMQ_ENDPOINT = 'https://animemusicquiz.com';
+
+// Shared states/vars
+export let CookieJar: string | null;
 
 /**
  * Fetch accsess token for Game Socket
@@ -33,18 +37,14 @@ export async function AMQLoginToken (username: string, password: string): Promis
     
     if ( cookie.length<0 || !cookie[0].includes('connect.sid') ) throw new Error('Failed to login. Invalid response.')
 
+    CookieJar = cookie[0].split(';')[0];
     const token = await fetch(`${AMQ_ENDPOINT}/socketToken`, {
-        method: 'GET', headers: { cookie: cookie[0].split(';')[0] }
+        method: 'GET', headers: { cookie: CookieJar }
     });
     if (!token.ok) throw new Error('Failed to login.');
 
     return await token.json();
 }
-
-
-// Game states
-let playerCount = 0;
-let gameInfo: Partial<UserState> = {};
 
 /**
  * Initial point of GAME client.
@@ -79,65 +79,29 @@ function userEventHandler(d: any) {
     }
 }
 
-/*
-export class AMQGame {
-    client: SocketIOClient.Socket;
-    commands: Map<string, Function> = new Map();
-    userInfo: Partial<UserState> = {};
-    playerCount: number = 0; // Game Player Count.
-    roomState: AMQRoom;
+// Initial point of EE/Sockets.
+export function bootstrapAMQGame () {
+    // create listner login
+    ipcMain.on('amqLogin', async (e, d) => {
+        const { username, password } = d[0];
+        try {
+            const { token, port } = await AMQLoginToken(username, password);
+            console.log('LOGGED IN', port);
+            initializeAMQGame(port, token);
 
-    constructor (port: number|string, token: string) {
-        this.client = io(`${AMQ_WSENDPOINT}:${port}`, {
-            query: { token },
-            reconnection: true,
-            upgrade: true,
-            transports: ['websocket'],
-            transportOptions: { polling: { extraHeaders: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36' } } },
-        });
+            coreEmitter.on('core', d => {
+                e.sender.send(d.event, d.data);
+            });
+            e.reply('amqLoggedIn');
+        } catch (err) {
+            console.log(err);
+            e.reply('amgLoginError', 'Failed to login.');
+        }
+    });
 
-        // Socket connections.
-        this.client.on('connect', (d: any) => {
-            console.log('Connected to game server.', d)
-        });
-        this.client.on('disconnect', (d: any) => {
-            console.log('Disconnected from the server.', d);
-        });
-        this.client.on('reconnect', (d: any) => {
-            console.log('Reconnected.', d);
-        });
-
-        // other states
-        this.roomState = new AMQRoom(this.client);
-
-        this.initializeGameHandlers();
-
-        this.client.on('command', (d: any) => {
-            this.commandHandler(d);
-        });
-    }
-
-    // Inserting command handlers
-    initializeGameHandlers () {
-        const { LoginComplete, PlayerCount } = AMQEventsCommand;
-
-        this.commands.set(LoginComplete, this.afterLogin.bind(this));
-        this.commands.set(PlayerCount, this.updatePlayerCount.bind(this));
-    }
-
-    commandHandler (data: any) {
-        const f = this.commands.get(data.command);
-        if (f) f(data.data);
-    }
-
-    afterLogin(data: any) {
-        this.userInfo = data;
-        console.log(this.userInfo);
-    }
-
-    updatePlayerCount(data: any) {
-        this.playerCount = data.count;
-        console.log('Updated Player Count: ', this.playerCount);
-    }
+    ipcMain.on('amqEmit', async (e, d) => {
+        console.log(d);
+        const data = d[0];
+        coreEmitter.emit('userEvent', data);
+    });
 }
-*/

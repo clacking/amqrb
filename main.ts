@@ -6,7 +6,7 @@ import serve from 'electron-serve';
 import Store from 'electron-store';
 import { nextServer } from './helper/nextServer';
 import { fetchAniListUserToken, fetchAniListAccsessToken, fetchUserByAccsess } from './helper/fetchAnilistUser';
-import { bootstrapAMQGame } from './helper/AMQBootstrap';
+import { bootstrapAMQGame } from './helper/AMQCore';
 import { SETTING_PATH, VIDEO_CACHE } from './helper/AppSettings';
 import { getDatabase } from './helper/Database';
 

@@ -22,7 +22,7 @@ const AMQLogin = () => {
         }
         window.electron.on('amgLoginError', loginFail);
         return () => window.electron.removeListener('amgLoginError', loginFail);
-    }, []);
+    }, [logging]);
 
     return (
         <div className="object-center w-full h-full flex flex-col justify-center items-center">
