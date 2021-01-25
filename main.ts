@@ -10,7 +10,7 @@ import { bootstrapAMQGame } from './helper/AMQBootstrap';
 import { SETTING_PATH, VIDEO_CACHE } from './helper/AppSettings';
 import { getDatabase } from './helper/Database';
 
-const DEV_SERVER = process.env.NODE_ENV !== 'production';
+const DEV_SERVER = process.env.APP_ENV !== 'production';
 const appServe = serve({directory: 'build'});
 
 let mainWindow: BrowserWindow;

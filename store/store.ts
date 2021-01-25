@@ -25,7 +25,7 @@ const createStore = () => {
     return configureStore({
         reducer: rootReducer,
         middleware: middlewareList,
-        devTools: process.env.NODE_ENV !== 'production',
+        devTools: process.env.APP_ENV !== 'production',
         preloadedState: preloadedState()
     })
 }

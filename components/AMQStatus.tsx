@@ -84,10 +84,10 @@ const AMQStatus = () => {
             </span>
             </div>
             <div>
-                <div className="text-2xl">{ state.self }</div>
                 <div className="w-full">
-                    <CharaImg className="py-4" src={img} />
+                    <CharaImg className="py-2" src={img} />
                 </div>
+                <div className="text-2xl py-2">{ state.self }</div>
                 <EXPProgressBar>
                     <Tooltip label={`${state.xpInfo.xpIntoLevel|0} / ${state.xpInfo.xpForLevel}`} aria-label="A tooltip">
                         <EXPLevel>{state.level}</EXPLevel>

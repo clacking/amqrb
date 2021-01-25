@@ -4,8 +4,8 @@
   "main": "./output/main.js",
   "license": "MIT",
   "scripts": {
-    "start": "cross-env NODE_ENV=production next build && next export && cp -rf out output/build && cross-env NODE_ENV=production electron .",
-    "start:dev": "cross-env NODE_ENV=dev tsc && cross-env NODE_ENV=dev electron .",
+    "start": "cross-env APP_ENV=production next build && next export && cp -rf out output/build && cross-env APP_ENV=production electron .",
+    "start:dev": "cross-env APP_ENV=dev tsc && cross-env APP_ENV=dev electron .",
     "run:dev": "ts-node test.ts",
     "build": "tsc"
   },

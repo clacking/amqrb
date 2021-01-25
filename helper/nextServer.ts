@@ -2,7 +2,7 @@ import { createServer } from 'http';
 import { parse } from 'url';
 import next from 'next';
 
-const DEV_SERVER = process.env.NODE_ENV !== 'production';
+const DEV_SERVER = process.env.APP_ENV !== 'production';
 const NEXT_PORT = 3000;
 const app = next({ dev: DEV_SERVER });
 const handle = app.getRequestHandler();
