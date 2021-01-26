@@ -88,5 +88,7 @@ export const ExpandLibrary = 'expandLibrary questions'; // library
 export const ExpandLibraryClose = 'expandLibrary closed'; // library
 export const GetLeaderboard = 'get leaderboard level entries'; // social
 export const StopLeaderboard = 'stop leaderboard listning'; // social
-
-
+export const EmoteUnlocked = 'emote unlocked';
+export const UnlockAvatar = 'unlock avatar';
+export const TicketRollResult = 'ticket roll result';
+export const ForceLogoff = 'force logoff';

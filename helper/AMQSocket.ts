@@ -2,7 +2,7 @@
  * Game socket.io client.
  */
 import { EventEmitter } from 'events';
-import io = require('socket.io-client');
+import { default as io } from 'socket.io-client';
 import { Logger } from './Logger';
 
 const AMQ_WSENDPOINT = 'wss://socket.animemusicquiz.com';

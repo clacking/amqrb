@@ -4,7 +4,7 @@
 
 Custom [AMQ](https://animemusicquiz.com/) client.
 
-## fearture
+## feature
 
 * Custom UI
 
@@ -23,4 +23,10 @@ Custom [AMQ](https://animemusicquiz.com/) client.
 ```sh
 $ yarn
 $ yarn start:dev
+```
+
+### test build
+
+```sh
+$ yarn start
 ```

@@ -1,6 +1,6 @@
 import { AMQAvater } from '../interface/AMQAvater.interface';
 
-export const getAvatarImg = (avatarName: string, outfitName: string, optionName: string, colorName: string) =>
+const getAvatarImg = (avatarName: string, outfitName: string, optionName: string, colorName: string) =>
 `https://cdn.animemusicquiz.com/v1/avatars/${avatarName}/${outfitName}/${optionName}/${colorName}/500px/Basic.webp`;
 
 export const getAvatar = (u: AMQAvater) => {
@@ -8,14 +8,19 @@ export const getAvatar = (u: AMQAvater) => {
     return getAvatarImg(avatarName, outfitName, optionName, colorName);
 }
 
-// https://cdn.animemusicquiz.com/v1/backgrounds/250px/Miyu_Standard_dolce_hori.webp
-
-const getBackgroundImg = (ext: 'webp' | '250px' | string, filename: string) =>
-`https://cdn.animemusicquiz.com/v1/backgrounds/svg/Hibiki_standard_red_hori.svg`;
+const getBackgroundImg = (ext: 'webp' | 'svg' | string, filename: string) => {
+    const type = ext==='webp' ? '250px' : 'svg';
+    return `https://cdn.animemusicquiz.com/v1/backgrounds/${type}/${filename}`;
+}
 
 export const getBackground = (u: AMQAvater, orientation: 'vert' | 'hori') => {
     const { backgroundHori, backgroundVert } = u.background;
     const link = orientation === 'vert' ? backgroundVert : backgroundHori;
-    const ext = link.split('.')[1] === 'webp' ? 'svg' : '250px';
+    const ext = link.split('.')[1] === 'webp' ? 'webp' : 'svg';
     return getBackgroundImg(ext, link);
 }
+
+export type EmojiSize = '150px' | '30px';
+
+export const getEmojiImage = (emoteName: string, size: EmojiSize) => 
+    `https://cdn.animemusicquiz.com/emotes/${size}/${emoteName}.png`;

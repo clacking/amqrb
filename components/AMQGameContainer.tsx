@@ -33,15 +33,20 @@ const AMQGameContainer = () => {
             setTeamMap(teamFullMap);
         }
 
-        window.electron.once(HostGame, setup);
-        window.electron.once(JoinGame, setup);
+        window.electron.on(HostGame, setup);
+        window.electron.on(JoinGame, setup);
+
+        return () => {
+            window.electron.removeAllListeners(HostGame);
+            window.electron.removeAllListeners(JoinGame);
+        }
     }, []);
 
     useEffect(() => {
         const changeToSpect = (e: any, arg: any) => {}
         const changeToPlayer = (e: any, arg: any) => {}
-        window.electron.once(SpectatorChangeToPlayer, changeToPlayer);
-        window.electron.once(PlayerChangedToSpectator, changeToSpect);
+        window.electron.on(SpectatorChangeToPlayer, changeToPlayer);
+        window.electron.on(PlayerChangedToSpectator, changeToSpect);
 
         const newPlayer = (e: any, arg: any) => {
             setPlayer([...player, arg]);
@@ -49,8 +54,13 @@ const AMQGameContainer = () => {
         const leftPlayer = (e: any, arg: any) => {
             setPlayer(player.filter(p => p.name!==arg.player.name));
         }
-        window.electron.once(NewPlayer, newPlayer);
-        window.electron.once(PlayerLeft, leftPlayer);
+        window.electron.on(NewPlayer, newPlayer);
+        window.electron.on(PlayerLeft, leftPlayer);
+
+        return () => {
+            window.electron.removeAllListeners(NewPlayer);
+            window.electron.removeAllListeners(PlayerLeft);
+        }
     }, [spect, player]);
     
     useEffect(() => {
@@ -58,7 +68,11 @@ const AMQGameContainer = () => {
             setChat([...chat, args]);
         }
 
-        window.electron.once(GameChatUpdate, msg);
+        window.electron.on(GameChatUpdate, msg);
+
+        return () => {
+            window.electron.removeAllListeners(GameChatUpdate);
+        }
     }, [chat]);
 
     if (!setting) return <span>...</span>

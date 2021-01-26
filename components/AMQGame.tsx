@@ -1,13 +1,14 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
+import { useToast } from '@chakra-ui/react';
 import userStatusSlice, { UserStatus } from '../store/userStatusSlice';
 import AMQIntro from './AMQIntro';
 import AMQStatus from './AMQStatus';
 import AMQRoom from './AMQRoom';
 import AMQQuiz from './AMQQuiz';
 import AMQGameContainer from './AMQGameContainer';
-import { LoginComplete } from '../helper/AMQEvents';
+import { LoginComplete, ServerRestart } from '../helper/AMQEvents';
 
 const MainUI = styled.main`
     background: #0e1117;
@@ -25,9 +26,23 @@ export const GameViewContext =
 
 const AMQGame = () => {
     const dispatch = useDispatch();
+    const toast = useToast();
     const [view, setView] = useState<GameViews>('default');
 
     const change = (view: GameViews) => setView(view);
+
+    useEffect(() => {
+        const showEvent = (e: any, d: any) => {
+            toast({
+                title: `Sever restart at ${d.time} min`,
+                description: `${d.msg}`
+            });
+        }
+
+        window.electron.on(ServerRestart, showEvent);
+
+        return () => window.electron.removeAllListeners(ServerRestart);
+    });
 
     useEffect(() => {
         const updateUserInfo = (e:any, d: any) => {
@@ -37,7 +52,7 @@ const AMQGame = () => {
             dispatch(userStatusSlice.actions.update({...data(d)}));
         }
         window.electron.once(LoginComplete, updateUserInfo);
-    }, [])
+    }, []);
 
     return (
         <GameViewContext.Provider value={{view, changeView: change}}>

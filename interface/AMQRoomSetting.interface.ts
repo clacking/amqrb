@@ -1,6 +1,6 @@
 import { AMQAvater } from './AMQAvater.interface';
 
-export type RoomChangeType = 'settings' | 'players' |'spectators' |
+export type RoomChangeType = 'settings' | 'players' |'spectators' | 'players' |
                             'songsLeft' | 'game start' | 'game over' | 'Room Closed'; // none==roomclose for Host
 
 export type RoomSetting = {
@@ -179,4 +179,6 @@ export type PublicRoomSettings = {
     hostAvatar: AMQAvater;
     settings: RoomSetting;
     songLeft?: number;
+    playerCount: number;
+    spectatorCount: number;
 }

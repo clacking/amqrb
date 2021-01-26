@@ -65,7 +65,7 @@ const AMQQuiz = ({chat}: {chat: AMQChat[]}) => {
         }
         window.electron.on(GameStarting, setup);
 
-        return () => window.electron.removeListener(GameStarting, setup);
+        return () => window.electron.removeAllListeners(GameStarting);
     }, []);
 
     // Initialize song list
@@ -73,16 +73,14 @@ const AMQQuiz = ({chat}: {chat: AMQChat[]}) => {
         const song = (e: any, arg: AllSong) => {
             setSongs(arg.names);
         }
-        window.electron.on(GetAllSongName, song);
-
-        return () => window.electron.removeListener(GetAllSongName, song);
-    }, [songs]);
+        window.electron.once(GetAllSongName, song);
+    }, []);
 
     useEffect(() => {
         const ans = (e: any, arg: any) => {}
         window.electron.on(AnswerResults, ans);
 
-        return () => window.electron.removeListener(AnswerResults, ans);
+        return () => window.electron.removeAllListeners(AnswerResults);
     });
 
     return (

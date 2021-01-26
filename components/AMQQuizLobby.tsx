@@ -1,10 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
 import { GameViewContext } from './AMQGame';
 import { getAvatar } from '../helper/AvatarImage';
-import { LeaveGame, StartGame, GetAllSongName, AMQEventType } from '../helper/AMQEvents';
+import { LeaveGame, StartGame, GetAllSongName, lobby, quiz } from '../helper/AMQEvents';
 import { AMQChat } from '../interface/AMQChat.interface';
 import { AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
-const { lobby, quiz } = AMQEventType;
 
 const PlayerBox = ({p}: {p: AMQRoomPlayer}) => {
     const img = getAvatar(p.avatar);

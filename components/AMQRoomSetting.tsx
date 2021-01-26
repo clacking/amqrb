@@ -1,4 +1,4 @@
-import { useState, useContext, useRef, Fragment } from 'react';
+import { useState, useContext, useRef } from 'react';
 import { useFormik } from 'formik';
 import { Button, ButtonGroup, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react"
 import { GameViewContext } from './AMQGame';
@@ -187,7 +187,7 @@ const Form = ({submit}: {submit: (val: RoomSetting, solo: boolean) => void}) => 
                 <span>Solo room?</span>
                 <input checked={solo} type="checkbox" onChange={e=>setSolo(!solo)} />
             </div>
-            { solo ? '' : <Fragment>
+            { solo ? '' : <>
             <div>
                 Room name
                 <input className="p-2 border" id="text-input" placeholder="Room name" name="roomName" value={form.values.roomName} onChange={form.handleChange} type="text" />
@@ -206,7 +206,7 @@ const Form = ({submit}: {submit: (val: RoomSetting, solo: boolean) => void}) => 
                 <input name="teamSize" value={form.values.teamSize} onChange={form.handleChange} type="number" min={1} max={8} step={1} />
                 <input name="teamSize" value={form.values.teamSize} onChange={form.handleChange} type="range" min={1} max={8} step={1} />
             </div>
-            </Fragment>}
+            </>}
             <div>
                 <p>Guess Time</p>
                 <input name="guessTime.standardValue" value={form.values.guessTime.standardValue} onChange={form.handleChange} type="number" min={5} max={60} step={5} />

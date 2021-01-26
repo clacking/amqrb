@@ -1,17 +1,18 @@
 import { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
+import { Tooltip } from "@chakra-ui/react"
+import { FaUsers, FaRegClone, FaRegSun } from 'react-icons/fa';
 import { RoomSetting, PublicRoomSettings, RoomChangeType } from '../interface/AMQRoomSetting.interface';
 import { AMQAvater } from '../interface/AMQAvater.interface';
 import { AMQChat } from '../interface/AMQChat.interface';
-import { Tooltip } from "@chakra-ui/react"
 import { GameViewContext } from './AMQGame';
 import { roombrowser, NewRoom, RoomChange, RemoveRoombrowserListeners } from '../helper/AMQEvents';
-import { getAvatar } from '../helper/AvatarImage';
+import { getAvatar, getBackground } from '../helper/AvatarImage';
 
 const RoomBox = (roomSettings: PublicRoomSettings) => {
     const {
         id, host, hostAvatar, players, numberOfPlayers,
-        numberOfSpectators, settings, inLobby,
+        numberOfSpectators, settings, inLobby, songLeft
     } = roomSettings;
     const join = (type: 'spect' | 'join') => {
         if (settings.privateRoom) {
@@ -20,22 +21,36 @@ const RoomBox = (roomSettings: PublicRoomSettings) => {
     }
 
     return (
-        <div className="bg-gray-800 border-gray-700 border-opacity-80 bg-opacity-80 rounded border p-2 m-2 w-40 h-60 text-center flex flex-col">
+        <div className="bg-gray-800 border-gray-700 border-opacity-80 bg-opacity-80 rounded border p-2 m-2 w-40 h-72 text-center flex flex-col">
             <div className="flex justify-between">
-                <span>{id}</span>
+                <span className="opacity-60">ID: {id}</span>
                 <span className="select-none">{settings.privateRoom ? '🔒' : '🚪'}</span>
             </div>
             <Tooltip label={ settings.roomName || 'no name' }>
                 <h3 className="truncate">{ settings.roomName || 'no name' }</h3>
             </Tooltip>
-            <div className="h-32 mx-auto">
-                <img className="h-32" loading="lazy" src={getAvatar(hostAvatar)} />
+            <div className="h-32 mx-auto w-full bg-center bg-auto shadow-lg shadow-inner relative" style={{ backgroundImage: `url(${getBackground(hostAvatar, 'hori')})` }}>
+                <p className="truncate absolute left-0 top-0 bg-gray-800 bg-opacity-80">{host}</p>
+                <p className="text-left"><img className="h-32" loading="lazy" src={getAvatar(hostAvatar)} /></p>
+                <p className="absolute right-0 bottom-0 bg-gray-800 bg-opacity-80">{settings.gameMode}</p>
             </div>
-            <p className="truncate">{host}</p>
+            <p><FaUsers /> {numberOfPlayers} / {settings.roomSize}</p>
+            <p>
+                {settings.songType.standardValue.openings ? ' OP ' : ' '}
+                {settings.songType.standardValue.endings ? ' ED' : ' '}
+                {settings.songType.standardValue.inserts ? ' Insert' : ' '}
+            </p>
+            <p>[view settings]</p>
             <div className="w-full flex">
-                <button className="w-1/2 cursor-pointer disabled:cursor-not-allowed hover:bg-gray-900 select-none disabled:opacity-40"
-                    onClick={_ => join('join')} disabled={inLobby}>Join</button>
-                <button className="w-1/2 cursor-pointer disabled:cursor-not-allowed hover:bg-gray-900 select-none"
+                { inLobby ?
+                    <button className="w-1/2 cursor-pointer bg-gray-700 hover:bg-gray-900 select-none"
+                        onClick={_ => join('join')} disabled={!inLobby}>Join</button>
+                    :
+                    <div className="w-1/2">
+                        {songLeft ? settings.numberOfSongs-songLeft : '0'} / {settings.numberOfSongs}
+                    </div>
+                }
+                <button className="w-1/2 cursor-pointer disabled:cursor-not-allowed bg-gray-700 hover:bg-gray-900 select-none"
                     onClick={_ => join('spect')}>Spect</button>
             </div>
         </div>
@@ -59,31 +74,39 @@ const AMQRoom = () => {
         const addNewRoom = (e: any, d: any) => {
             switch (d.changeType as RoomChangeType) {
                 case 'settings': {
-                    //setRooms(rooms.map(r => r.id===d.roomId ? {...r, ...r} : r ) );
+                    setRooms(rooms.map( r => r.id===d.roomId ? {...r, ...d.change} : r ));
                     break;
                 }
                 case 'players': {
+                    setRooms(rooms.map( r => r.id===d.roomId ? {...r, playerCount: d.playerCount} : r ));
                     break;
                 }
                 case 'spectators': {
+                    setRooms(rooms.map( r => r.id===d.roomId ? {...r, spectatorCount: d.spectatorCount} : r ));
                     break;
                 }
                 case 'songsLeft': {
+                    setRooms(rooms.map( r => r.id===d.roomId ? {...r, songLeft: d.songsLeft} : r ));
                     break;
                 }
                 case 'game start': {
+                    setRooms(rooms.map( r => r.id===d.roomId ? {...r, inLobby: false} : r ));
                     break;
                 }
                 case 'game over': {
+                    setRooms(rooms.map( r => r.id===d.roomId ? {...r, inLobby: true} : r ));
                     break;
                 }
                 case 'Room Closed': {
                     setRooms(rooms.filter(r => r.id !== d.roomId));
                     break;
                 }
-                default: {
+                case 'players': {
                     break;
-                } // Host room closed
+                }
+                default: {
+                    break; // Host room closed
+                }
             }
         }
 
@@ -105,7 +128,10 @@ const AMQRoom = () => {
     const filteredRooms = rooms.filter(d => {
         const lkw = kw.toLowerCase();
         return (
-            ( kw ? (d.settings.roomName.toLowerCase().includes(lkw) || d.host.toLowerCase().includes(lkw)) : true ) &&
+            ( kw ? (
+                // Filtered by Room name, Host username, Room ID
+                d.settings.roomName.toLowerCase().includes(lkw) || d.host.toLowerCase().includes(lkw) || d.id.toString().includes(lkw)
+            ) : true ) &&
             ( waitRoom ? d.inLobby : true ) &&
             ( publicRoom ? !d.settings.privateRoom : true )
             );

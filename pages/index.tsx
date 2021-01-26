@@ -49,16 +49,16 @@ function MainPage() {
         <Tabs forceRenderTabPanel={true} className="flex flex-row bodyContainer">
             <TabList className="TabBar flex flex-col relative" style={color}>
                 <img className="my-4 p-1" src="/amqrb.png" />
-                <Tab className="px-2 text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
+                <Tab className="px-2 text-center text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
                     <BsFillCollectionPlayFill style={icon} />
                 </Tab>
-                <Tab className="px-2 text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
+                <Tab className="px-2 text-center text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
                     <BsPeopleCircle style={icon} />
                 </Tab>
-                <Tab className="px-2 text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
+                <Tab className="px-2 text-center text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
                     <BsFileEarmarkArrowDown style={icon} />
                 </Tab>
-                <Tab className="px-2 text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
+                <Tab className="px-2 text-center text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
                     <BsPieChartFill style={icon} />
                 </Tab>
                 <div className="text-center text-gray-400 absolute bottom-0 w-full font-light select-none">
