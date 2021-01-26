@@ -3,24 +3,40 @@ import styled from 'styled-components';
 import { RoomSetting, PublicRoomSettings, RoomChangeType } from '../interface/AMQRoomSetting.interface';
 import { AMQAvater } from '../interface/AMQAvater.interface';
 import { AMQChat } from '../interface/AMQChat.interface';
+import { Tooltip } from "@chakra-ui/react"
 import { GameViewContext } from './AMQGame';
-import { AMQEventType, NewRoom, RoomChange, RemoveRoombrowserListeners } from '../helper/AMQEvents';
-const { roombrowser } = AMQEventType;
+import { roombrowser, NewRoom, RoomChange, RemoveRoombrowserListeners } from '../helper/AMQEvents';
+import { getAvatar } from '../helper/AvatarImage';
 
-const RoomBox = ({ id, host, hostAvatar, players, numberOfPlayers, numberOfSpectators, settings }: PublicRoomSettings) => {
-    const join = () => {
+const RoomBox = (roomSettings: PublicRoomSettings) => {
+    const {
+        id, host, hostAvatar, players, numberOfPlayers,
+        numberOfSpectators, settings, inLobby,
+    } = roomSettings;
+    const join = (type: 'spect' | 'join') => {
         if (settings.privateRoom) {
             //
         }
     }
 
     return (
-        <div className="p-2 m-2 w-40 h-32 text-center">
-            <h3>{ settings.roomName || 'no name' }</h3>
-            <p>Host: {host}</p>
+        <div className="bg-gray-800 border-gray-700 border-opacity-80 bg-opacity-80 rounded border p-2 m-2 w-40 h-60 text-center flex flex-col">
+            <div className="flex justify-between">
+                <span>{id}</span>
+                <span className="select-none">{settings.privateRoom ? '🔒' : '🚪'}</span>
+            </div>
+            <Tooltip label={ settings.roomName || 'no name' }>
+                <h3 className="truncate">{ settings.roomName || 'no name' }</h3>
+            </Tooltip>
+            <div className="h-32 mx-auto">
+                <img className="h-32" loading="lazy" src={getAvatar(hostAvatar)} />
+            </div>
+            <p className="truncate">{host}</p>
             <div className="w-full flex">
-                <span className="w-1/2">{settings.privateRoom ? '🔒' : '🚪'} Join</span>
-                <span className="w-1/2">Spect</span>
+                <button className="w-1/2 cursor-pointer disabled:cursor-not-allowed hover:bg-gray-900 select-none disabled:opacity-40"
+                    onClick={_ => join('join')} disabled={inLobby}>Join</button>
+                <button className="w-1/2 cursor-pointer disabled:cursor-not-allowed hover:bg-gray-900 select-none"
+                    onClick={_ => join('spect')}>Spect</button>
             </div>
         </div>
     )
@@ -44,19 +60,41 @@ const AMQRoom = () => {
             switch (d.changeType as RoomChangeType) {
                 case 'settings': {
                     //setRooms(rooms.map(r => r.id===d.roomId ? {...r, ...r} : r ) );
+                    break;
                 }
-                case 'players': {}
-                case 'spectators': {}
-                case 'songsLeft': {}
-                case 'game start': {}
-                case 'game over': {}
-                default: {} // Host room closed
+                case 'players': {
+                    break;
+                }
+                case 'spectators': {
+                    break;
+                }
+                case 'songsLeft': {
+                    break;
+                }
+                case 'game start': {
+                    break;
+                }
+                case 'game over': {
+                    break;
+                }
+                case 'Room Closed': {
+                    setRooms(rooms.filter(r => r.id !== d.roomId));
+                    break;
+                }
+                default: {
+                    break;
+                } // Host room closed
             }
         }
 
-        window.electron.once(NewRoom, room);
-        // window.electron.once(RoomChange, addNewRoom);
-    });
+        window.electron.on(NewRoom, room);
+        window.electron.on(RoomChange, addNewRoom);
+
+        return () => {
+            window.electron.removeAllListeners(NewRoom);
+            window.electron.removeAllListeners(RoomChange);
+        }
+    }, [rooms]);
 
     const backLobby = () => {
         window.electron.send('amqEmit', { command: RemoveRoombrowserListeners, type: roombrowser });
@@ -66,12 +104,15 @@ const AMQRoom = () => {
     const publicRooms = rooms.filter(d => !d.settings.privateRoom ).length;
     const filteredRooms = rooms.filter(d => {
         const lkw = kw.toLowerCase();
-        return ( kw ? (d.settings.roomName.toLowerCase().includes(lkw) || d.host.toLowerCase().includes(lkw)) : true ) &&
-            ( publicRoom ? !d.settings.privateRoom : true );
+        return (
+            ( kw ? (d.settings.roomName.toLowerCase().includes(lkw) || d.host.toLowerCase().includes(lkw)) : true ) &&
+            ( waitRoom ? d.inLobby : true ) &&
+            ( publicRoom ? !d.settings.privateRoom : true )
+            );
     });
 
     return (
-        <div className="relative w-full h-full overflow-auto">
+        <div className="relative w-full h-full overflow-auto mb-2">
             <header className="fixed">
                 <button className="p-2 m-2 border cursor-pointer" onClick={backLobby}>back</button>
                 <span className="mx-2">
@@ -83,7 +124,7 @@ const AMQRoom = () => {
                         Public <input checked={publicRoom} onChange={e => setPublicRoom(e.target.checked)} type="checkbox" />
                     </span>
                     <span className="mx-1">
-                        Waiting <input type="checkbox" />
+                        Waiting <input checked={waitRoom} onChange={e => setWaitRoom(e.target.checked)} type="checkbox" />
                     </span>
                     <span>
                         <input placeholder="Word filter" className="bg-gray-600 p-1 m-1" type="text"
@@ -92,8 +133,8 @@ const AMQRoom = () => {
                     </span>
                 </span>
             </header>
-            <section className="flex flex-row flex-wrap pt-16 p-4 w-full h-full">
-                {(rooms.length === 0) ?
+            <section className="flex flex-row flex-wrap justify-center pt-16 p-4 w-full h-full">
+                {(filteredRooms.length === 0) ?
                     <p>No rooms.</p>
                     :
                     filteredRooms.map((r, i) => <RoomBox key={i} {...r} />)

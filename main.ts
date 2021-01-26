@@ -70,9 +70,9 @@ async function main() {
 
     let webview_page: string;
     if (DEV_SERVER) {
-        // mainWindow.webContents.session.loadExtension(
-        //     path.join(os.homedir(), `AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.10.0_0`)
-        // );
+        mainWindow.webContents.session.loadExtension(
+            path.join(os.homedir(), `AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.10.1_0`)
+        );
         mainWindow.webContents.openDevTools();
         webview_page = await nextServer();
     } else {
