@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { GameViewContext } from './AMQGame';
+import { GameContext } from './AMQGameContainer';
 import { getAvatar, getBackground } from '../helper/AvatarImage';
 import { LeaveGame, StartGame, GetAllSongName, lobby, quiz } from '../helper/AMQEvents';
 import { AMQChatMesasge, AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
@@ -17,7 +18,7 @@ const PlayerBox = ({p}: {p: AMQRoomPlayer}) => {
                 <div className="flex justify-between px-2">
                     <span className="">{level}</span>
                     <span></span>
-                    <span className="text-green-400">{ready ? '✔' : ''}</span>
+                    <span className="text-green-400 select-none">{ready ? '✔' : ''}</span>
                 </div>
                 <div className="flex justify-center h-8 text-xl">
                     <span className="flex-grow text-center">{name}</span>
@@ -27,8 +28,9 @@ const PlayerBox = ({p}: {p: AMQRoomPlayer}) => {
     )
 }
 
-const AMQQuiz = ({chat, player}: {chat: AMQChatMesasge[], player: AMQRoomPlayer[]}) => {
+const AMQQuiz = () => {
     const { changeView } = useContext(GameViewContext);
+    const { chat, player } = useContext(GameContext);
 
     const backLobby = () => {
         changeView('default');

@@ -64,7 +64,10 @@ export type AMQChatMesasge = {
     teamMessage: boolean;
     messageId: number;
     emojis: AMQChatEmoji[];
-    badges: any[];
+    badges: {
+        name: string;
+        fileName: string;
+    }[];
     atEveryone: boolean;
     date?: Date;
 }
@@ -76,6 +79,9 @@ export type AMQChatEventLog = {
 }
 
 export type AMQChatMessages = {
-    bubles: any[];
+    bubles: {
+        emoteIds: any[],
+        shortCodes: string[]
+    }[];
     messages: AMQChatMesasge[];
 }

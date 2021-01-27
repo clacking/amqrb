@@ -27,7 +27,6 @@ ipcMain.handle('quit', () => {
 ipcMain.handle('pageLoaded', async e => {
     return await new Promise(resolve => {
         const saved = store.get('savedList') || [];
-        console.log(saved)
         resolve(saved);
     });
 });
@@ -73,7 +72,9 @@ async function main() {
         mainWindow.webContents.session.loadExtension(
             path.join(os.homedir(), `AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.10.1_0`)
         );
-        mainWindow.webContents.openDevTools();
+        mainWindow.webContents.on('did-frame-finish-load', () => {
+            mainWindow.webContents.openDevTools();
+        });
         webview_page = await nextServer();
     } else {
         await appServe(mainWindow);
