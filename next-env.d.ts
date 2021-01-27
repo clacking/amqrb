@@ -8,6 +8,7 @@ import {
     AMQEventsCommand, AMQEventCommands, LoginComplete, PlayerCount, GetAllSongName,
 } from './helper/AMQEvents';
 import { AllSong } from './interface/AMQQuiz.interface';
+import { AMQChatMessages } from './interface/AMQRoom.interface';
 
 declare global {
     interface Window {
@@ -33,4 +34,6 @@ interface AMQGameReciveEvents {
     [LoginComplete]: (e: IpcRendererEvent, data: UserStatus) => void;
     [PlayerCount]: (e: IpcRendererEvent, data: {count: number}) => void;
     [GetAllSongName]: (e: IpcRendererEvent, data: AllSong) => void;
+    [PlayerReadyChange]: (e: IpcRendererEvent, data: {gamePlayerId: number, ready: boolean}) => void;
+    [GameChatUpdate]: (e: IpcRendererEvent, data: AMQChatMessages) => void;
 }

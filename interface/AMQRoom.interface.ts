@@ -49,3 +49,33 @@ export type AMQInGamePlayer = {
     teamPlayer: any;
     teamNumber: number;
 }
+
+/*
+ * GameChatUpdate
+ */
+export type AMQChatEmoji = {
+    emotes: number[];
+    customEmojis: any[];
+}
+
+export type AMQChatMesasge = {
+    sender: string;
+    message: string;
+    teamMessage: boolean;
+    messageId: number;
+    emojis: AMQChatEmoji[];
+    badges: any[];
+    atEveryone: boolean;
+    date?: Date;
+}
+
+// simple event log on chat
+export type AMQChatEventLog = {
+    sender: string;
+    message: string;
+}
+
+export type AMQChatMessages = {
+    bubles: any[];
+    messages: AMQChatMesasge[];
+}

@@ -1,7 +1,7 @@
-import { AMQChat } from '../interface/AMQChat.interface';
+import { AMQChatMesasge } from '../interface/AMQRoom.interface';
 
-const AMQChat = ({chat}: {chat: AMQChat[]}) => {
+const AMQChat = ({chat}: {chat: AMQChatMesasge[]}) => {
     return (
         <div></div>
-    )
+    );
 }

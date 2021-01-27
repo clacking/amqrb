@@ -4,7 +4,6 @@ import { Tooltip } from "@chakra-ui/react"
 import { FaUsers, FaRegClone, FaRegSun } from 'react-icons/fa';
 import { RoomSetting, PublicRoomSettings, RoomChangeType } from '../interface/AMQRoomSetting.interface';
 import { AMQAvater } from '../interface/AMQAvater.interface';
-import { AMQChat } from '../interface/AMQChat.interface';
 import { GameViewContext } from './AMQGame';
 import { roombrowser, NewRoom, RoomChange, RemoveRoombrowserListeners } from '../helper/AMQEvents';
 import { getAvatar, getBackground } from '../helper/AvatarImage';
@@ -29,7 +28,7 @@ const RoomBox = (roomSettings: PublicRoomSettings) => {
             <Tooltip label={ settings.roomName || 'no name' }>
                 <h3 className="truncate">{ settings.roomName || 'no name' }</h3>
             </Tooltip>
-            <div className="h-32 mx-auto w-full bg-center bg-auto shadow-lg shadow-inner relative" style={{ backgroundImage: `url(${getBackground(hostAvatar, 'hori')})` }}>
+            <div className="h-32 mx-auto w-full bg-center bg-auto shadow-inner relative" style={{ backgroundImage: `url(${getBackground(hostAvatar, 'hori')})` }}>
                 <p className="truncate absolute left-0 top-0 bg-gray-800 bg-opacity-80">{host}</p>
                 <p className="text-left"><img className="h-32" loading="lazy" src={getAvatar(hostAvatar)} /></p>
                 <p className="absolute right-0 bottom-0 bg-gray-800 bg-opacity-80">{settings.gameMode}</p>

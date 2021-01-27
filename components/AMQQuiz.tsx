@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { GameViewContext } from './AMQGame';
-import { AMQChat } from '../interface/AMQChat.interface';
 import { GameStarting, QuizOver, RejoiningPlayer, SpectatorLeft, QuizNextVideoInfo,
     PlayNextSong, PlayerAnswers, AnswerResults, QuizEndResult, QuizWaitingBuffering,
     QuizXpCreditGain, QuizNoPlayers, PlayerAnswered, QuizOverlayMessage, QuizSkipMessage,
     ReturnLobbyVoteStart, GuessPhaseOver, QuizFatalError, PlayerNameChange, QuizUnpauseTriggered,
     QuizPauseTriggered, ReturnLobbyVoteResult, TeamMemberAnswer, GetAllSongName, QuizAnswer, AMQEventType, SkipVote } from '../helper/AMQEvents';
 const { quiz } = AMQEventType;
-import { AMQInGamePlayer } from '../interface/AMQRoom.interface';
+import { AMQInGamePlayer, AMQChatMesasge } from '../interface/AMQRoom.interface';
 import { AllSong } from '../interface/AMQQuiz.interface';
 
 const PlayerList = () => {}
@@ -54,7 +53,7 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
     )
 }
 
-const AMQQuiz = ({chat}: {chat: AMQChat[]}) => {
+const AMQQuiz = ({chat}: {chat: AMQChatMesasge[]}) => {
     const { changeView } = useContext(GameViewContext);
     const [songs, setSongs] = useState<string[]>([]);
     const [player, setPlayer] = useState<AMQInGamePlayer[]>([]);
