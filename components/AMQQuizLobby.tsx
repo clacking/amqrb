@@ -5,7 +5,7 @@ import { getAvatar, getBackground } from '../helper/AvatarImage';
 import { LeaveGame, StartGame, GetAllSongName, lobby, quiz } from '../helper/AMQEvents';
 import { AMQChatMesasge, AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
 
-const PlayerBox = ({p}: {p: AMQRoomPlayer}) => {
+const PlayerBox = ({p, host}: {p: AMQRoomPlayer, host: boolean}) => {
     const { avatar, ready, level, name } = p;
     const img = getAvatar(avatar);
 
@@ -17,7 +17,9 @@ const PlayerBox = ({p}: {p: AMQRoomPlayer}) => {
             <div className="p-1">
                 <div className="flex justify-between px-2">
                     <span className="">{level}</span>
-                    <span></span>
+                    { host ?
+                    <span className="select-none px-1">Host</span>
+                    : ''}
                     <span className="text-green-400 select-none">{ready ? '✔' : ''}</span>
                 </div>
                 <div className="flex justify-center h-8 text-xl">
@@ -30,7 +32,7 @@ const PlayerBox = ({p}: {p: AMQRoomPlayer}) => {
 
 const AMQQuiz = () => {
     const { changeView } = useContext(GameViewContext);
-    const { chat, player } = useContext(GameContext);
+    const { chat, player, hostName } = useContext(GameContext);
 
     const backLobby = () => {
         changeView('default');
@@ -38,7 +40,6 @@ const AMQQuiz = () => {
     }
 
     const start = () => {
-        changeView('quiz');
         window.electron.send('amqEmit', { command: StartGame, type: lobby });
         window.electron.send('amqEmit', { command: GetAllSongName, type: quiz });
     }
@@ -56,11 +57,11 @@ const AMQQuiz = () => {
             </header>
             <section className="flex flex-row flex-wrap w-full h-full p-4">
                 <div className="w-full flex flex-row flex-wrap">
-                    {player.map(p => <PlayerBox p={p} key={p.gamePlayerId} />)}
+                    {player.map(p => <PlayerBox p={p} key={p.gamePlayerId} host={p.name===hostName} />)}
                 </div>
                 <div className="px-8 h-1/2 xl:h-full w-full xl:w-1/3">
                     {chat.map(c => (
-                        <p key={c.messageId}>{c.sender}: {c.message}</p>
+                        <p key={c.messageId}>[{c.date.toLocaleTimeString()}] {c.sender}: {c.message}</p>
                     ))}
                 </div>
             </section>

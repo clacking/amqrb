@@ -1,9 +1,12 @@
 import { useState, useEffect, useContext, createContext } from 'react';
 import { GameViewContext } from './AMQGame';
 import { RoomSetting } from '../interface/AMQRoomSetting.interface';
-import { AMQChatMesasge, AMQChatMessages, AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
-import { GameChatUpdate, HostGame, SpectatorChangeToPlayer,
+import { GameStart } from '../interface/AMQQuiz.interface';
+import { AMQChatMesasge, AMQChatMessages, AMQInGamePlayer, AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
+import {
+    GameChatUpdate, HostGame, SpectatorChangeToPlayer,
     PlayerChangedToSpectator, JoinGame, NewPlayer, PlayerLeft, PlayerReadyChange,
+    GameStarting,
 } from '../helper/AMQEvents';
 import AMQQuizLobby from './AMQQuizLobby';
 import AMQQuiz from './AMQQuiz';
@@ -15,7 +18,9 @@ type GameContextStates = {
     gameId: number;
     spectator: AMQSpectator[];
     player: AMQRoomPlayer[];
+    inGamePlayer: AMQInGamePlayer[];
     teamMap: any;
+    hostName: string;
 }
 
 export const GameContext = createContext<GameContextStates>({} as GameContextStates);
@@ -27,17 +32,21 @@ const AMQGameContainer = () => {
     const { view, changeView } = useContext(GameViewContext);
     const [chat, setChat] = useState<AMQChatMesasge[]>([]);
 
+    // Game states
     const [hostname, setHostname] = useState('');
     const [setting, setSetting] = useState<RoomSetting>();
     const [gameId, setGameId] = useState(0);
     const [not, setNOT] = useState(0); // numberOfTeams
     const [spectator, setSpect] = useState<AMQSpectator[]>([]);
     const [player, setPlayer] = useState<AMQRoomPlayer[]>([]);
+    const [inGamePlayer, setInGamePlayer] = useState<AMQInGamePlayer[]>([]);
     const [teamMap, setTeamMap] = useState<any>();
 
+    // Room setup for join/host
     useEffect(() => {
         const setup = (e: any, d: any) => {
-            const { gameId, settings, spectators, players, numberOfTeams, teamFullMap } = d;
+            const { gameId, hostName, settings, spectators, players, numberOfTeams, teamFullMap } = d;
+            setHostname(hostName);
             setGameId(gameId);
             setSetting(settings);
             setSpect(spectators);
@@ -45,7 +54,6 @@ const AMQGameContainer = () => {
             setNOT(numberOfTeams);
             setTeamMap(teamFullMap);
         }
-
         window.electron.on(HostGame, setup);
         window.electron.on(JoinGame, setup);
 
@@ -100,18 +108,32 @@ const AMQGameContainer = () => {
         }
     }, [chat]);
 
+    // GameStarting
+    useEffect(() => {
+        const gameStart = (e: any, d: GameStart) => {
+            setInGamePlayer(d.players);
+            changeView('quiz');
+        }
+        window.electron.on(GameStarting, gameStart);
+
+        return () => {
+            window.electron.removeAllListeners(GameStarting);
+        }
+    });
+
     if (!setting) return <span>...</span>
 
     return (
         <GameContext.Provider value={{
-            setting, chat, not, gameId, spectator, player, teamMap
+            setting, chat, not, gameId, spectator, player, teamMap, inGamePlayer,
+            hostName: hostname
         }}>
             <>
             {
                 (view === 'lobby') ?
                     <AMQQuizLobby /> :
                 (view === 'quiz') ?
-                    <AMQQuiz chat={chat} /> :
+                    <AMQQuiz /> :
                 <div>none</div>
             }
             </>

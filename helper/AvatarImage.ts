@@ -16,8 +16,11 @@ const getBackgroundImg = (ext: 'webp' | 'svg' | string, filename: string): strin
 export const getBackground = (u: AMQAvater, orientation: 'vert' | 'hori'): string => {
     const { backgroundHori, backgroundVert } = u.background;
     const link = orientation === 'vert' ? backgroundVert : backgroundHori;
-    if (!link) return '';
-    const ext = (link.split('.')[1] === 'webp') ? 'webp' : 'svg';
+    if (!link) {
+        console.error('no img?', u);
+        return '';
+    }
+    const ext = (link.split('.')[1] === 'svg') ? 'svg' : 'webp';
     return getBackgroundImg(ext, link);
 }
 

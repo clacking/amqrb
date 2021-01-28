@@ -6,6 +6,7 @@ import { GameStarting, QuizOver, RejoiningPlayer, SpectatorLeft, QuizNextVideoIn
     ReturnLobbyVoteStart, GuessPhaseOver, QuizFatalError, PlayerNameChange, QuizUnpauseTriggered,
     QuizPauseTriggered, ReturnLobbyVoteResult, TeamMemberAnswer, GetAllSongName, QuizAnswer, AMQEventType, SkipVote } from '../helper/AMQEvents';
 const { quiz } = AMQEventType;
+import { GameContext } from './AMQGameContainer';
 import { AMQInGamePlayer, AMQChatMesasge } from '../interface/AMQRoom.interface';
 import { AllSong } from '../interface/AMQQuiz.interface';
 
@@ -26,7 +27,7 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
         window.electron.on(QuizAnswer, checkAnswer);
 
         return () => window.electron.removeListener(QuizAnswer, checkAnswer);
-    }, [answerCheck]);
+    });
 
     const submitAnswer = (e: React.KeyboardEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -53,19 +54,11 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
     )
 }
 
-const AMQQuiz = ({chat}: {chat: AMQChatMesasge[]}) => {
+const AMQQuiz = () => {
     const { changeView } = useContext(GameViewContext);
+    const { chat, inGamePlayer } = useContext(GameContext);
     const [songs, setSongs] = useState<string[]>([]);
-    const [player, setPlayer] = useState<AMQInGamePlayer[]>([]);
-
-    useEffect(() => {
-        const setup = (e: any, arg: any) => {
-            setPlayer(arg.players);
-        }
-        window.electron.on(GameStarting, setup);
-
-        return () => window.electron.removeAllListeners(GameStarting);
-    }, []);
+    const [anserable, setAnswerable] = useState(false);
 
     // Initialize song list
     useEffect(() => {
@@ -79,7 +72,15 @@ const AMQQuiz = ({chat}: {chat: AMQChatMesasge[]}) => {
         const ans = (e: any, arg: any) => {}
         window.electron.on(AnswerResults, ans);
 
-        return () => window.electron.removeAllListeners(AnswerResults);
+        const phasecheck = (e: any) => {
+            setAnswerable(false);
+        }
+        window.electron.on(GuessPhaseOver, phasecheck);
+
+        return () => {
+            window.electron.removeAllListeners(AnswerResults);
+            window.electron.removeAllListeners(GuessPhaseOver);
+        }
     });
 
     return (

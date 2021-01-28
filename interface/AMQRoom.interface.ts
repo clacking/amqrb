@@ -22,6 +22,20 @@ export type AMQRoom = {
     teamFullMap: any;
 }
 
+// HostGame JoinGame
+export type AMQRoomSetup = {
+    gameId: number;
+    hostName: string;
+    inLobby: boolean;
+    inQueue: any[];
+    numberOfTeams: number;
+    players: AMQRoomPlayer;
+    settings: RoomSetting;
+    soloMode: boolean;
+    spectators: any[];
+    teamFullMap: any;
+}
+
 export type AMQSpectator = {
     spectatorDescription: {
         name: string;
@@ -69,7 +83,7 @@ export type AMQChatMesasge = {
         fileName: string;
     }[];
     atEveryone: boolean;
-    date?: Date;
+    date: Date;
 }
 
 // simple event log on chat

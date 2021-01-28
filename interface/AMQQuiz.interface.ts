@@ -1,3 +1,4 @@
+import { AMQInGamePlayer } from './AMQRoom.interface';
 
 /**
  * Util interfaces
@@ -16,6 +17,16 @@ interface ProgressBarState {
 export interface AllSong {
     names: string[];
     version: number;
+}
+
+// GameStarting
+export interface GameStart {
+    gameMode: string;
+    showSelection: number;
+    groupSlotMap: {
+        [key: string]: number[];
+    };
+    players: AMQInGamePlayer[];
 }
 
 // QuizNextVideoInfo

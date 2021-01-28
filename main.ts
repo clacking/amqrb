@@ -72,7 +72,7 @@ async function main() {
         mainWindow.webContents.session.loadExtension(
             path.join(os.homedir(), `AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.10.1_0`)
         );
-        mainWindow.webContents.on('did-frame-finish-load', () => {
+        mainWindow.webContents.once('did-frame-finish-load', () => {
             mainWindow.webContents.openDevTools();
         });
         webview_page = await nextServer();

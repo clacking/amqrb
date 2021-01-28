@@ -6,6 +6,7 @@ import { AMQEventsCommand } from './helper/AMQEvents';
 import { UserStatus } from './store/userStatusSlice';
 import {
     AMQEventsCommand, AMQEventCommands, LoginComplete, PlayerCount, GetAllSongName,
+    GuessPhaseOver,
 } from './helper/AMQEvents';
 import { AllSong } from './interface/AMQQuiz.interface';
 import { AMQChatMessages } from './interface/AMQRoom.interface';
@@ -36,4 +37,5 @@ interface AMQGameReciveEvents {
     [GetAllSongName]: (e: IpcRendererEvent, data: AllSong) => void;
     [PlayerReadyChange]: (e: IpcRendererEvent, data: {gamePlayerId: number, ready: boolean}) => void;
     [GameChatUpdate]: (e: IpcRendererEvent, data: AMQChatMessages) => void;
+    [GuessPhaseOver]: (e: IpcRendererEvent) => void;
 }
