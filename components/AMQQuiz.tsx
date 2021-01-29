@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { FaPause, FaLessThan } from 'react-icons/fa';
 import { GameViewContext } from './AMQGame';
 import {
     quiz, lobby, GameStarting, QuizOver, RejoiningPlayer, SpectatorLeft, QuizNextVideoInfo,
@@ -14,7 +15,40 @@ import { AllSong } from '../interface/AMQQuiz.interface';
 
 const PlayerList = () => {}
 
-const VideoPlayer = () => {}
+const VideoPlayer = ({src, playControl, startTime, volume}:
+    {src: string, playControl: boolean, startTime: number, volume: number}
+) => {
+    const ref = useRef<HTMLVideoElement>(null);
+
+    useEffect(() => {
+        ref.current!.src = src;
+    }, [src]);
+
+    useEffect(() => {
+        if (playControl) ref.current!.play();
+        else ref.current!.pause();
+    }, [playControl]);
+
+    useEffect(() => {
+        ref.current!.currentTime = startTime;
+    }, [startTime]);
+
+    useEffect(() => {
+        ref.current!.volume = volume;
+    }, [volume]);
+
+    return (
+        <video className="w-full h-full" ref={ref} />
+    );
+}
+
+const VideoOverlay = () => {
+    return (
+        <div className="w-full h-full"></div>
+    );
+}
+
+const Video = () => {}
 
 const AnswerBox = ({songs}: {songs: string[]}) => {
     const [skip, setSkip] = useState(false);
@@ -41,10 +75,10 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
     }
 
     const submitSkip = () => {
-        setSkip(!skip);
         window.electron.send('amqEmit', {
-            command: SkipVote, data: {skipVote: skip}, type: quiz
+            command: SkipVote, data: {skipVote: !skip}, type: quiz
         });
+        setSkip(!skip);
     }
 
     return (
@@ -87,10 +121,22 @@ const AMQQuiz = () => {
 
     const leave = () => {
         window.electron.send('amqEmit', { command: LeaveGame, type: lobby });
+        changeView('default');
     }
+
+    const pause = () => {}
+
+    const lobbyVote = () => {}
 
     return (
         <div className="relative w-full h-full">
+            <header className="flex w-full p-2 justify-between">
+                <div>
+                    <button onClick={leave} className="px-4 py-1 border">Leave</button>
+                    <button onClick={pause} className="px-4 py-1"><FaPause /></button>
+                    <button onClick={lobbyVote} className="px-4 py-1"><FaLessThan /></button>
+                </div>
+            </header>
             <main className="flex flex-col">
                 <div className="flex flex-row">
                     <AnswerBox songs={songs} />

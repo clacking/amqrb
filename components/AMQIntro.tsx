@@ -35,15 +35,28 @@ const AMQIntro = () => {
         <SelectUI id="GameUI" className="h-full w-full flex flex-row justify-center items-centers relative">
             <div className="m-auto z-20">
                 <h1 className="text-2xl text-center font-thin">AMQ</h1>
-                <GameButton onClick={browseRoom} className="p-4 border rounded border-gray-400 m-4">
-                    Browse Rooms
-                </GameButton>
-                <GameButton onClick={()=>setOpen(true)} className="p-4 border rounded border-gray-400 m-4">
-                    Create Room
-                </GameButton>
-                <GameButton className="p-4 border rounded border-gray-400 m-4">
-                    Play Ranked
-                </GameButton>
+                <div>
+                    <GameButton onClick={browseRoom} className="p-4 border rounded border-gray-400 m-4">
+                        Browse Rooms
+                    </GameButton>
+                    <GameButton onClick={()=>setOpen(true)} className="p-4 border rounded border-gray-400 m-4">
+                        Create Room
+                    </GameButton>
+                    <GameButton className="p-4 border rounded border-gray-400 m-4">
+                        Play Ranked
+                    </GameButton>
+                </div>
+                <div>
+                    <GameButton className="p-4 border rounded border-gray-400 m-4">
+                        Expand library
+                    </GameButton>
+                    <GameButton className="p-4 border rounded border-gray-400 m-4">
+                        Leaderboard
+                    </GameButton>
+                    <GameButton className="p-4 border rounded border-gray-400 m-4">
+                        Browser skins
+                    </GameButton>
+                </div>
             </div>
             <AMQRoomSetting isOpen={isOpen} onClose={()=>setOpen(!isOpen)} />
         </SelectUI>
