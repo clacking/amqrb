@@ -74,6 +74,7 @@ const AMQGameContainer = () => {
             setPlayer([...player, d]);
         }
         const leftPlayer = (e: any, d: any) => {
+            if (d.newHost) setHostname(d.newHost);
             setPlayer(player.filter(p => p.name!==d.player.name));
         }
         window.electron.on(NewPlayer, newPlayer);

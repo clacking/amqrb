@@ -99,3 +99,12 @@ export type AMQChatMessages = {
     }[];
     messages: AMQChatMesasge[];
 }
+
+// PlayerLeft
+export type AMQPlayerLeft = {
+    newHost?: string;
+    player: {
+        name: string;
+        gamePlayerId: number;
+    }
+}

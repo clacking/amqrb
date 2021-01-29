@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { GameViewContext } from './AMQGame';
-import { GameStarting, QuizOver, RejoiningPlayer, SpectatorLeft, QuizNextVideoInfo,
+import {
+    quiz, lobby, GameStarting, QuizOver, RejoiningPlayer, SpectatorLeft, QuizNextVideoInfo,
     PlayNextSong, PlayerAnswers, AnswerResults, QuizEndResult, QuizWaitingBuffering,
     QuizXpCreditGain, QuizNoPlayers, PlayerAnswered, QuizOverlayMessage, QuizSkipMessage,
     ReturnLobbyVoteStart, GuessPhaseOver, QuizFatalError, PlayerNameChange, QuizUnpauseTriggered,
-    QuizPauseTriggered, ReturnLobbyVoteResult, TeamMemberAnswer, GetAllSongName, QuizAnswer, AMQEventType, SkipVote } from '../helper/AMQEvents';
-const { quiz } = AMQEventType;
+    QuizPauseTriggered, ReturnLobbyVoteResult, TeamMemberAnswer, GetAllSongName, QuizAnswer, SkipVote, LeaveGame,
+
+} from '../helper/AMQEvents';
 import { GameContext } from './AMQGameContainer';
 import { AMQInGamePlayer, AMQChatMesasge } from '../interface/AMQRoom.interface';
 import { AllSong } from '../interface/AMQQuiz.interface';
@@ -51,7 +53,7 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
             <input className="flex-grow" type="text" value={answer} onChange={e=>setAnswer(e.target.value)} onKeyPress={submitAnswer} />
             <button>Copy</button>
         </div>
-    )
+    );
 }
 
 const AMQQuiz = () => {
@@ -83,6 +85,10 @@ const AMQQuiz = () => {
         }
     });
 
+    const leave = () => {
+        window.electron.send('amqEmit', { command: LeaveGame, type: lobby });
+    }
+
     return (
         <div className="relative w-full h-full">
             <main className="flex flex-col">
@@ -92,7 +98,7 @@ const AMQQuiz = () => {
                 <div className="flex flex-row"></div>
             </main>
         </div>
-    )
+    );
 }
 
 export default AMQQuiz;

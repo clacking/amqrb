@@ -40,6 +40,10 @@ ipcMain.handle('addBackup', async (e, arg) => {
     return;
 });
 
+ipcMain.on('openLink', (e, arg) => {
+    shell.openExternal('');
+})
+
 ipcMain.on('startLogin', () => {
     shell.openExternal('https://anilist.co/api/v2/oauth/authorize?client_id=4043&redirect_uri=https://anilist.co/api/v2/oauth/pin&response_type=code');
 });

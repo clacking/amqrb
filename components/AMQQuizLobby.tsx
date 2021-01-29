@@ -1,9 +1,13 @@
 import { useState, useEffect, useContext } from 'react';
+import { useUserStatus } from '../store/selectors';
 import { GameViewContext } from './AMQGame';
 import { GameContext } from './AMQGameContainer';
 import { getAvatar, getBackground } from '../helper/AvatarImage';
-import { LeaveGame, StartGame, GetAllSongName, lobby, quiz } from '../helper/AMQEvents';
+import {
+    LeaveGame, StartGame, GetAllSongName, lobby, quiz, SetReady
+} from '../helper/AMQEvents';
 import { AMQChatMesasge, AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
+import AMQChat from './AMQChat';
 
 const PlayerBox = ({p, host}: {p: AMQRoomPlayer, host: boolean}) => {
     const { avatar, ready, level, name } = p;
@@ -32,37 +36,52 @@ const PlayerBox = ({p, host}: {p: AMQRoomPlayer, host: boolean}) => {
 
 const AMQQuiz = () => {
     const { changeView } = useContext(GameViewContext);
-    const { chat, player, hostName } = useContext(GameContext);
+    const { chat, player, hostName, gameId, setting } = useContext(GameContext);
+    const { state } = useUserStatus();
+    const [ready, setReady] = useState(false);
 
     const backLobby = () => {
         changeView('default');
         window.electron.send('amqEmit', { command: LeaveGame, type: lobby });
     }
 
-    const start = () => {
-        window.electron.send('amqEmit', { command: StartGame, type: lobby });
-        window.electron.send('amqEmit', { command: GetAllSongName, type: quiz });
+    const isHost = state.self===hostName;
+    const isStartable = player.filter(u => u.ready).length===player.length;
+    const startGame = () => {
+        if (isHost) {
+            window.electron.send('amqEmit', { command: StartGame, type: lobby });
+            window.electron.send('amqEmit', { command: GetAllSongName, type: quiz });
+        } else {
+            window.electron.send('amqEmit', { command: SetReady, data: { ready: true }, type: lobby });
+        }
     }
 
-    const setting = () => {}
+    const openSetting = () => {}
 
     return (
         <div className="relative w-full h-full">
             <header className="flex w-full p-2 justify-between">
                 <div>
                     <button onClick={backLobby} className="px-4 py-1 border">Back</button>
+                    <span className="mx-2">
+                        #{gameId} {setting.roomName} ({player.length} / {setting.roomSize})
+                    </span>
                 </div>
-                <button onClick={start} className="bg-green-800 px-4 py-1">Start</button>
-                <button onClick={setting} className="px-4 py-1 border">Setting</button>
+                <div>
+                    <button onClick={startGame} disabled={!isStartable}
+                        className={`border-green-900 border px-4 py-1 mx-1 ${isStartable?'bg-green-800':'cursor-not-allowed'}`}
+                    >
+                        { isHost ? 'Start' : 'Ready'}
+                    </button>
+                    <button onClick={openSetting} className="border px-4 py-1 mx-1">Setting</button>
+                </div>
             </header>
             <section className="flex flex-row flex-wrap w-full h-full p-4">
                 <div className="w-full flex flex-row flex-wrap">
                     {player.map(p => <PlayerBox p={p} key={p.gamePlayerId} host={p.name===hostName} />)}
                 </div>
                 <div className="px-8 h-1/2 xl:h-full w-full xl:w-1/3">
-                    {chat.map(c => (
-                        <p key={c.messageId}>[{c.date.toLocaleTimeString()}] {c.sender}: {c.message}</p>
-                    ))}
+                    <AMQChat chat={chat} />
                 </div>
             </section>
         </div>

@@ -94,11 +94,14 @@ const AMQStatus = () => {
     const img = getAvatar(state.avatar);
 
     return (
-        <StatusUI className="text-center justify-center flex flex-col justify-between">
-            <div>
-                <span className="absolute left-2 p-2 m-2 border border-gray-600 hover:border-gray-400 rounded-sm cursor-pointer">
+        <StatusUI className="text-center flex flex-col justify-between">
+            <div className="flex justify-between">
+                <span className="p-2 m-2 border border-gray-600 hover:border-gray-400 rounded-sm cursor-pointer">
                     <FaRegSun />
-            </span>
+                </span>
+                <span className="my-2 mx-4">
+                    Logout
+                </span>
             </div>
             <div>
                 <div className="w-full">
