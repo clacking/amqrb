@@ -10,13 +10,14 @@ import {
 
 } from '../helper/AMQEvents';
 import { GameContext } from './AMQGameContainer';
+import AMQChat from './AMQChat';
 import { AMQInGamePlayer, AMQChatMesasge } from '../interface/AMQRoom.interface';
 import { AllSong } from '../interface/AMQQuiz.interface';
 
 const PlayerList = () => {}
 
-const VideoPlayer = ({src, playControl, startTime, volume}:
-    {src: string, playControl: boolean, startTime: number, volume: number}
+const VideoPlayer = ({src, playControl, startTime, volume, visible}:
+    {src: string, playControl: boolean, startTime: number, volume: number, visible: boolean}
 ) => {
     const ref = useRef<HTMLVideoElement>(null);
 
@@ -48,12 +49,23 @@ const VideoOverlay = () => {
     );
 }
 
-const Video = () => {}
+const Video = ({songId}: {songId: number}) => {
+    const [play, setPlay] = useState(false);
+    const [videoSrc, setVideoSrc] = useState('');
 
-const AnswerBox = ({songs}: {songs: string[]}) => {
+    useEffect(() => {
+    }, [songId]);
+
+    return (
+        <div>
+        </div>
+    );
+}
+
+const AnswerBox = ({songs, answerable}: {songs: string[], answerable: boolean}) => {
     const [skip, setSkip] = useState(false);
-    const [answer, setAnswer] = useState('');
-    const [answerCheck, setAnswerCheck] = useState('');
+    const [answer, setAnswer] = useState(''); // Player answer
+    const [answerCheck, setAnswerCheck] = useState(''); // Answer submit response
 
     // Answer response
     useEffect(() => {
@@ -66,8 +78,8 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
     });
 
     const submitAnswer = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        e.preventDefault();
         if (e.key === 'Enter') {
+            e.preventDefault();
             window.electron.send('amqEmit', {
                 command: QuizAnswer, type: quiz, data: { answer, isPlaying: true, volumeAtMax: false }
             });
@@ -81,11 +93,24 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
         setSkip(!skip);
     }
 
+    const copyAnswer = async () => {
+        await navigator.clipboard.writeText(answer);
+    }
+
     return (
         <div className="flex flex-row">
-            <button onClick={submitSkip}>{skip?'✅':''} Skip</button>
-            <input className="flex-grow" type="text" value={answer} onChange={e=>setAnswer(e.target.value)} onKeyPress={submitAnswer} />
-            <button>Copy</button>
+            <button onClick={submitSkip}>{skip?'✔':''} Skip</button>
+            <input className="flex-grow" type="text" value={answer} disabled={!answerable}
+                onChange={e=>setAnswer(e.target.value)} onKeyPress={submitAnswer}
+            />
+            {
+                answerCheck ? (
+                    <div></div>
+                ) : (
+                    <div></div>
+                )
+            }
+            <button onClick={copyAnswer}>Copy</button>
         </div>
     );
 }
@@ -93,8 +118,12 @@ const AnswerBox = ({songs}: {songs: string[]}) => {
 const AMQQuiz = () => {
     const { changeView } = useContext(GameViewContext);
     const { chat, inGamePlayer } = useContext(GameContext);
+
+    const [songCount, setSongCount] = useState(0);
     const [songs, setSongs] = useState<string[]>([]);
-    const [anserable, setAnswerable] = useState(false);
+    const [playerAnswers, setPlayerAnswers] = useState([]);
+    const [quizReady, setQuizReady] = useState(false);
+    const [answerable, setAnswerable] = useState(false);
 
     // Initialize song list
     useEffect(() => {
@@ -105,7 +134,7 @@ const AMQQuiz = () => {
     }, []);
 
     useEffect(() => {
-        const ans = (e: any, arg: any) => {}
+        const ans = (e: any, d: any) => {}
         window.electron.on(AnswerResults, ans);
 
         const phasecheck = (e: any) => {
@@ -113,9 +142,15 @@ const AMQQuiz = () => {
         }
         window.electron.on(GuessPhaseOver, phasecheck);
 
+        const playnext = (e: any, d: any) => {
+            setAnswerable(true);
+            setSongCount(d.songNumber);
+        }
+        window.electron.on(PlayNextSong, playnext);
+
         return () => {
-            window.electron.removeAllListeners(AnswerResults);
             window.electron.removeAllListeners(GuessPhaseOver);
+            window.electron.removeAllListeners(AnswerResults);
         }
     });
 
@@ -129,7 +164,7 @@ const AMQQuiz = () => {
     const lobbyVote = () => {}
 
     return (
-        <div className="relative w-full h-full">
+        <div className="w-full h-full flex flex-col">
             <header className="flex w-full p-2 justify-between">
                 <div>
                     <button onClick={leave} className="px-4 py-1 border">Leave</button>
@@ -137,11 +172,13 @@ const AMQQuiz = () => {
                     <button onClick={lobbyVote} className="px-4 py-1"><FaLessThan /></button>
                 </div>
             </header>
-            <main className="flex flex-col">
+            <main className="flex flex-col xl:flex-row">
                 <div className="flex flex-row">
-                    <AnswerBox songs={songs} />
+                    <AnswerBox songs={songs} answerable={answerable} />
                 </div>
-                <div className="flex flex-row"></div>
+                <div className="flex">
+                    <AMQChat chat={chat} />
+                </div>
             </main>
         </div>
     );

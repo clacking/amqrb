@@ -16,15 +16,17 @@ const AMQChat = ({chat, isTeam}: {chat: AMQChatMesasge[], isTeam?: boolean}) => 
     }
 
     return (
-        <div className="flex flex-col">
-            {chat.map(c => (
-                <div key={c.messageId}>
-                    <span className="">[{c.date.toLocaleTimeString()}]</span>
-                    <span className="px-1">{c.sender}:</span>
-                    <span className="">{c.message}</span>
-                </div>
-            ))}
-            <input type="text" className="text-white bg-gray-800 p-1" placeholder="Chat"
+        <div className="flex flex-col h-full p-2 border border-purple-700 border-opacity-60 bg-purple-900 bg-opacity-30 rounded-md">
+            <section className="flex flex-col flex-grow overflow-auto">
+                {chat.map(c => (
+                    <div key={c.messageId}>
+                        <span className="">[{c.date.toLocaleTimeString()}]</span>
+                        <span className="px-1">{c.sender}:</span>
+                        <span className="">{c.message}</span>
+                    </div>
+                ))}
+            </section>
+            <input type="text" className="flex text-white border border-white border-opacity-30 bg-gray-800 p-1" placeholder="Chat"
                 value={chatInput} onChange={e=>setChatInput(e.target.value)} onKeyPress={sendChat}
             />
         </div>

@@ -1,4 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
+import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, ModalHeader, useDisclosure } from '@chakra-ui/react';
 import { useUserStatus } from '../store/selectors';
 import { GameViewContext } from './AMQGame';
 import { GameContext } from './AMQGameContainer';
@@ -9,7 +10,7 @@ import {
 import { AMQChatMesasge, AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
 import AMQChat from './AMQChat';
 
-const PlayerBox = ({p, host}: {p: AMQRoomPlayer, host: boolean}) => {
+const PlayerBox = ({p, host, team}: {p: AMQRoomPlayer, host: boolean, team?: number}) => {
     const { avatar, ready, level, name } = p;
     const img = getAvatar(avatar);
 
@@ -21,10 +22,12 @@ const PlayerBox = ({p, host}: {p: AMQRoomPlayer, host: boolean}) => {
             <div className="p-1">
                 <div className="flex justify-between px-2">
                     <span className="">{level}</span>
-                    { host ?
-                    <span className="select-none px-1">Host</span>
+                    { team ?
+                    <span className="select-none px-1">{team}</span>
                     : ''}
-                    <span className="text-green-400 select-none">{ready ? '✔' : ''}</span>
+                    <span className="text-green-400 select-none">
+                        {host ? 'Host' : (ready ? '✔' : '')}
+                    </span>
                 </div>
                 <div className="flex justify-center h-8 text-xl">
                     <span className="flex-grow text-center">{name}</span>
@@ -36,7 +39,8 @@ const PlayerBox = ({p, host}: {p: AMQRoomPlayer, host: boolean}) => {
 
 const AMQQuiz = () => {
     const { changeView } = useContext(GameViewContext);
-    const { chat, player, hostName, gameId, setting } = useContext(GameContext);
+    const { chat, player, spectator, hostName, gameId, setting } = useContext(GameContext);
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { state } = useUserStatus();
     const [ready, setReady] = useState(false);
 
@@ -56,15 +60,13 @@ const AMQQuiz = () => {
         }
     }
 
-    const openSetting = () => {}
-
     return (
-        <div className="relative w-full h-full">
+        <div className="w-full h-full flex flex-col">
             <header className="flex w-full p-2 justify-between">
                 <div>
                     <button onClick={backLobby} className="px-4 py-1 border">Back</button>
                     <span className="mx-2">
-                        #{gameId} {setting.roomName} ({player.length} / {setting.roomSize})
+                        #{gameId} {setting.roomName} ({player.length}/{setting.roomSize}) {setting.teamSize>0 && `(TeamSize: ${setting.teamSize})`}
                     </span>
                 </div>
                 <div>
@@ -73,17 +75,31 @@ const AMQQuiz = () => {
                     >
                         { isHost ? 'Start' : 'Ready'}
                     </button>
-                    <button onClick={openSetting} className="border px-4 py-1 mx-1">Setting</button>
+                    <button onClick={onOpen} className="border px-4 py-1 mx-1">Setting</button>
+                    <button className="border px-4 py-1 mx-1">Spectators ({spectator.length})</button>
                 </div>
             </header>
-            <section className="flex flex-row flex-wrap w-full h-full p-4">
-                <div className="w-full flex flex-row flex-wrap">
-                    {player.map(p => <PlayerBox p={p} key={p.gamePlayerId} host={p.name===hostName} />)}
+            <main className="flex flex-col xl:flex-row justify-between w-full h-full p-4">
+                <div className="flex flex-grow flex-row">
+                    {player.map(p =>
+                        <PlayerBox p={p} key={p.gamePlayerId} host={p.name===hostName} />
+                    )}
                 </div>
-                <div className="px-8 h-1/2 xl:h-full w-full xl:w-1/3">
+                <div className="px-2 h-1/2 xl:h-full w-full xl:w-1/3">
                     <AMQChat chat={chat} />
                 </div>
-            </section>
+            </main>
+
+            <Modal isOpen={isOpen} onClose={onClose} scrollBehavior='inside'>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Room setting</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {JSON.stringify(setting)}
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </div>
     )
 }
