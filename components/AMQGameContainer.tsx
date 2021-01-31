@@ -6,7 +6,7 @@ import { AMQChatMesasge, AMQChatMessages, AMQInGamePlayer, AMQRoomPlayer, AMQSpe
 import {
     GameChatUpdate, HostGame, SpectatorChangeToPlayer,
     PlayerChangedToSpectator, JoinGame, NewPlayer, PlayerLeft, PlayerReadyChange,
-    GameStarting,
+    GameStarting, JoinTeam, NewSpectator, QuizOver,
 } from '../helper/AMQEvents';
 import AMQQuizLobby from './AMQQuizLobby';
 import AMQQuiz from './AMQQuiz';
@@ -65,10 +65,16 @@ const AMQGameContainer = () => {
 
     // Player, Spectator
     useEffect(() => {
-        const changeToSpect = (e: any, d: any) => {}
-        const changeToPlayer = (e: any, d: any) => {}
-        window.electron.on(SpectatorChangeToPlayer, changeToPlayer);
+        const changeToSpect = (e: any, d: any) => {
+            setPlayer(player.filter(p=>p.gamePlayerId!==d.playerDescription.gamePlayerId));
+            setSpect([...spectator, d.spectatorDescription]);
+        }
+        const changeToPlayer = (e: any, d: any) => {
+            setPlayer([...player, d]);
+            setSpect(spectator.filter(s => s.name!==d.name));
+        }
         window.electron.on(PlayerChangedToSpectator, changeToSpect);
+        window.electron.on(SpectatorChangeToPlayer, changeToPlayer);
 
         const newPlayer = (e: any, d: any) => {
             setPlayer([...player, d]);
@@ -80,9 +86,14 @@ const AMQGameContainer = () => {
         window.electron.on(NewPlayer, newPlayer);
         window.electron.on(PlayerLeft, leftPlayer);
 
+        const newSpect = (e: any, d: any) => {
+            setSpect([...spectator, d]);
+        }
+        window.electron.on(NewSpectator, newSpect);
+
         const changeReady = (e: any, d: any) => {
             setPlayer(player.map(p => {
-                return p.gamePlayerId===d.gamePlayerId ? {...p, ready: d.ready} : p
+                return p.gamePlayerId===d.gamePlayerId ? {...p, ready: d.ready} : p;
             }));
         }
         window.electron.on(PlayerReadyChange, changeReady);
@@ -93,8 +104,23 @@ const AMQGameContainer = () => {
             window.electron.removeAllListeners(NewPlayer);
             window.electron.removeAllListeners(PlayerLeft);
             window.electron.removeAllListeners(PlayerReadyChange);
+            window.electron.removeAllListeners(NewSpectator);
         }
-    }, [spectator, player]);
+    }, [spectator, player, chat]);
+
+    // Team
+    useEffect(() => {
+        const changeTeam = (e: any, d: any) => {
+            setPlayer(player.map(p => {
+                return p.gamePlayerId===d.gamePlayerId ? {...p, teamNumber: d.newTeam} : p;
+            }));
+        }
+        window.electron.on(JoinTeam, changeTeam);
+
+        return () => {
+            window.electron.removeAllListeners(JoinTeam);
+        }
+    }, [player]);
 
     // Chat
     useEffect(() => {
@@ -119,6 +145,18 @@ const AMQGameContainer = () => {
 
         return () => {
             window.electron.removeAllListeners(GameStarting);
+        }
+    });
+
+    // QuizOver
+    useEffect(() => {
+        const quizOver = (e: any, d: any) => {
+            changeView('lobby');
+        }
+        window.electron.on(QuizOver, quizOver);
+
+        return () => {
+            window.electron.removeAllListeners(QuizOver);
         }
     });
 

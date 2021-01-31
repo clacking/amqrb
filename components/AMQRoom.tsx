@@ -137,7 +137,7 @@ const AMQRoom = () => {
     });
 
     return (
-        <div className="relative w-full h-full overflow-auto mb-2">
+        <div className="flex w-full h-full overflow-auto mb-2">
             <header className="fixed">
                 <button className="p-2 m-2 border cursor-pointer" onClick={backLobby}>back</button>
                 <span className="mx-2">

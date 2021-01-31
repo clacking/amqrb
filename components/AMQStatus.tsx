@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaUsers, FaTicketAlt, FaRegSun } from 'react-icons/fa';
+import { FaUsers, FaTicketAlt, FaRegSun, FaSignOutAlt } from 'react-icons/fa';
 import { Tooltip } from "@chakra-ui/react"
 import { useUserStatus } from '../store/selectors';
 import { getAvatar } from '../helper/AvatarImage';
@@ -96,11 +96,11 @@ const AMQStatus = () => {
     return (
         <StatusUI className="text-center flex flex-col justify-between">
             <div className="flex justify-between">
-                <span className="p-2 m-2 border border-gray-600 hover:border-gray-400 rounded-sm cursor-pointer">
-                    <FaRegSun />
+                <span className="leading-4 p-2 m-2 border border-gray-600 hover:border-gray-400 rounded-sm cursor-pointer">
+                    <FaSignOutAlt />
                 </span>
-                <span className="my-2 mx-4">
-                    Logout
+                <span className="leading-4 p-2 m-2 border border-gray-600 hover:border-gray-400 rounded-sm cursor-pointer">
+                    <FaRegSun />
                 </span>
             </div>
             <div>

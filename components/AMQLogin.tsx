@@ -21,7 +21,7 @@ const AMQLogin = () => {
             setLogging(false);
         }
         window.electron.on('amgLoginError', loginFail);
-        return () => window.electron.removeListener('amgLoginError', loginFail);
+        return () => window.electron.removeAllListeners('amgLoginError');
     }, [logging]);
 
     return (

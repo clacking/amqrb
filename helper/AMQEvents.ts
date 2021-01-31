@@ -55,6 +55,7 @@ export const PlayerNameChange = 'player name change'; // lobby
 export const JoinTeam = 'join team'; // lobby
 export const ShuffleTeams = 'shuffle teams'; // lobby
 export const LeaveGame = 'leave game'; // lobby
+export const NewSpectator = 'New Spectator'; // lobby
 export const SetReady = 'set ready'; // lobby
 export const QuizNoSongs = 'Quiz no songs'; // quiz
 export const GetAllSongName = 'get all song names'; //quiz

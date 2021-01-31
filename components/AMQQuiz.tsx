@@ -11,13 +11,13 @@ import {
 } from '../helper/AMQEvents';
 import { GameContext } from './AMQGameContainer';
 import AMQChat from './AMQChat';
-import { AMQInGamePlayer, AMQChatMesasge } from '../interface/AMQRoom.interface';
-import { AllSong } from '../interface/AMQQuiz.interface';
+import { AllSong, NextVideoInfo } from '../interface/AMQQuiz.interface';
+import { count } from 'console';
 
 const PlayerList = () => {}
 
-const VideoPlayer = ({src, playControl, startTime, volume, visible}:
-    {src: string, playControl: boolean, startTime: number, volume: number, visible: boolean}
+const VideoPlayer = ({src, playControl, startPoint, volume, visible}:
+    {src: string, playControl: boolean, startPoint: number, volume: number, visible: boolean}
 ) => {
     const ref = useRef<HTMLVideoElement>(null);
 
@@ -31,38 +31,75 @@ const VideoPlayer = ({src, playControl, startTime, volume, visible}:
     }, [playControl]);
 
     useEffect(() => {
-        ref.current!.currentTime = startTime;
-    }, [startTime]);
+        ref.current!.currentTime = startPoint;
+    }, [startPoint]);
 
     useEffect(() => {
         ref.current!.volume = volume;
     }, [volume]);
 
     return (
-        <video className="w-full h-full" ref={ref} />
+        <video className="w-full h-full absolute z-0" ref={ref} controls={false} />
     );
 }
 
-const VideoOverlay = () => {
-    return (
-        <div className="w-full h-full"></div>
-    );
-}
-
-const Video = ({songId}: {songId: number}) => {
-    const [play, setPlay] = useState(false);
-    const [videoSrc, setVideoSrc] = useState('');
+const VideoOverlay = ({playLength}:
+    {playLength: number}
+) => {
+    const [countdown, setCountdown] = useState(playLength);
 
     useEffect(() => {
-    }, [songId]);
+        const timeout = setTimeout(() => {
+            if (countdown>0) setCountdown(countdown-1);
+        }, 1000);
+
+        return () => clearTimeout(timeout);
+    }, [countdown]);
 
     return (
-        <div>
+        <div className="w-full h-full absolute z-10">
+            <div>{countdown}</div>
         </div>
     );
 }
 
-const AnswerBox = ({songs, answerable}: {songs: string[], answerable: boolean}) => {
+const Video = ({songId, videoBuf, songCount}:
+    {songId: number, videoBuf: boolean, songCount: number}
+) => {
+    const [play, setPlay] = useState(false);
+    // video infos
+    const [videoSrc, setVideoSrc] = useState('');
+    const [startPoint, setStartPoint] = useState(0);
+    const [visible, setVisible] = useState(false);
+
+    // all video info
+    // TODO: put it in main process
+    const [vcount, setVcount] = useState(0);
+    const [videos, setVideos] = useState<NextVideoInfo[]>([]);
+
+    useEffect(() => {
+        const nextVideo = (e: any, d: NextVideoInfo) => {
+            setVideos([...videos, d]);
+        }
+        window.electron.on(QuizNextVideoInfo, nextVideo);
+
+        return () => {
+            window.electron.removeAllListeners(QuizNextVideoInfo);
+        }
+    }, [songId]);
+
+    const video = videos[songCount-1];
+
+    return (
+        <div className="relative" style={{width: '720px', height: '1280px'}}>
+            <VideoOverlay playLength={video.startPont} />
+        </div>
+    );
+}
+
+const AnswerBox = ({songs, answerable, songCount}:
+    {songs: string[], answerable: boolean, songCount: number}
+) => {
     const [skip, setSkip] = useState(false);
     const [answer, setAnswer] = useState(''); // Player answer
     const [answerCheck, setAnswerCheck] = useState(''); // Answer submit response
@@ -76,6 +113,12 @@ const AnswerBox = ({songs, answerable}: {songs: string[], answerable: boolean}) 
 
         return () => window.electron.removeListener(QuizAnswer, checkAnswer);
     });
+
+    // Reset
+    useEffect(() => {
+        setAnswer('');
+        setSkip(false);
+    }, [songCount]);
 
     const submitAnswer = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
@@ -100,7 +143,7 @@ const AnswerBox = ({songs, answerable}: {songs: string[], answerable: boolean}) 
     return (
         <div className="flex flex-row">
             <button onClick={submitSkip}>{skip?'✔':''} Skip</button>
-            <input className="flex-grow" type="text" value={answer} disabled={!answerable}
+            <input className="flex flex-grow text-white border border-white border-opacity-30 bg-gray-800 p-1" type="text" value={answer} disabled={!answerable}
                 onChange={e=>setAnswer(e.target.value)} onKeyPress={submitAnswer}
             />
             {
@@ -124,6 +167,7 @@ const AMQQuiz = () => {
     const [playerAnswers, setPlayerAnswers] = useState([]);
     const [quizReady, setQuizReady] = useState(false);
     const [answerable, setAnswerable] = useState(false);
+    const [waitingBuf, setWaitingBuf] = useState(false);
 
     // Initialize song list
     useEffect(() => {
@@ -154,6 +198,17 @@ const AMQQuiz = () => {
         }
     });
 
+    useEffect(() => {
+        const buffer = (e: any, d: any) => {
+            setWaitingBuf(true);
+        }
+        window.electron.on(QuizWaitingBuffering, buffer);
+
+        return () => {
+            window.electron.removeAllListeners(QuizWaitingBuffering);
+        }
+    }, [waitingBuf]);
+
     const leave = () => {
         window.electron.send('amqEmit', { command: LeaveGame, type: lobby });
         changeView('default');
@@ -174,7 +229,7 @@ const AMQQuiz = () => {
             </header>
             <main className="flex flex-col xl:flex-row">
                 <div className="flex flex-row">
-                    <AnswerBox songs={songs} answerable={answerable} />
+                    <AnswerBox songs={songs} answerable={answerable} songCount={songCount} />
                 </div>
                 <div className="flex">
                     <AMQChat chat={chat} />

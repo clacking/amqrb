@@ -35,7 +35,7 @@ const AMQIntro = () => {
         <SelectUI id="GameUI" className="h-full w-full flex flex-row justify-center items-centers relative">
             <div className="m-auto z-20">
                 <h1 className="text-2xl text-center font-thin">AMQ</h1>
-                <div>
+                <div className="flex justify-center">
                     <GameButton onClick={browseRoom} className="p-4 border rounded border-gray-400 m-4">
                         Browse Rooms
                     </GameButton>
@@ -46,15 +46,12 @@ const AMQIntro = () => {
                         Play Ranked
                     </GameButton>
                 </div>
-                <div>
+                <div className="flex justify-center">
                     <GameButton className="p-4 border rounded border-gray-400 m-4">
                         Expand library
                     </GameButton>
                     <GameButton className="p-4 border rounded border-gray-400 m-4">
                         Leaderboard
-                    </GameButton>
-                    <GameButton className="p-4 border rounded border-gray-400 m-4">
-                        Browser skins
                     </GameButton>
                 </div>
             </div>

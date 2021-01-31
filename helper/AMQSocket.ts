@@ -53,9 +53,8 @@ export const initilizeGameSocket = (port: string|number, token: string): SocketI
         const { command, data } = d;
         const logString = JSON.stringify(data) || '';
         Logger.info('command recived: %o %o', command, logString.length<200 ? logString : logString.slice(0,200));
-        const handler = commands.get(command);
-        if (handler) handler(data);
-        else Logger.warn('Command handler is not registerd. %o', command);
+
+        emitEvent(command, data);
     });
 
     return sio;

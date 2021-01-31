@@ -21,7 +21,10 @@ const GameContainer = styled.section`
 `
 
 type GameViews = 'default' | 'rooms' | 'lobby' | 'quiz' | 'br';
-type GameViewType = {view: GameViews, changeView: (view: GameViews) => void };
+type GameViewType = {
+    view: GameViews,
+    changeView: (view: GameViews) => void
+};
 export const GameViewContext =
     createContext<GameViewType>({} as GameViewType);
 
@@ -41,7 +44,6 @@ const AMQGame = () => {
                 isClosable: true
             });
         }
-
         window.electron.on(ServerRestart, showEvent);
 
         return () => window.electron.removeAllListeners(ServerRestart);

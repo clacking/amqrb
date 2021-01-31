@@ -10,7 +10,7 @@ import {
 import { AMQChatMesasge, AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
 import AMQChat from './AMQChat';
 
-const PlayerBox = ({p, host, team}: {p: AMQRoomPlayer, host: boolean, team?: number}) => {
+const PlayerBox = ({p, host, team}: {p: AMQRoomPlayer, host: boolean, team: number}) => {
     const { avatar, ready, level, name } = p;
     const img = getAvatar(avatar);
 
@@ -22,8 +22,8 @@ const PlayerBox = ({p, host, team}: {p: AMQRoomPlayer, host: boolean, team?: num
             <div className="p-1">
                 <div className="flex justify-between px-2">
                     <span className="">{level}</span>
-                    { team ?
-                    <span className="select-none px-1">{team}</span>
+                    { team>1 ?
+                    <span className="select-none px-1">{p.teamNumber}</span>
                     : ''}
                     <span className="text-green-400 select-none">
                         {host ? 'Host' : (ready ? '✔' : '')}
@@ -66,7 +66,7 @@ const AMQQuiz = () => {
                 <div>
                     <button onClick={backLobby} className="px-4 py-1 border">Back</button>
                     <span className="mx-2">
-                        #{gameId} {setting.roomName} ({player.length}/{setting.roomSize}) {setting.teamSize>0 && `(TeamSize: ${setting.teamSize})`}
+                        #{gameId} {setting.roomName} ({player.length}/{setting.roomSize}) {setting.teamSize>1 && `(TeamSize: ${setting.teamSize})`}
                     </span>
                 </div>
                 <div>
@@ -82,7 +82,7 @@ const AMQQuiz = () => {
             <main className="flex flex-col xl:flex-row justify-between w-full h-full p-4">
                 <div className="flex flex-grow flex-row">
                     {player.map(p =>
-                        <PlayerBox p={p} key={p.gamePlayerId} host={p.name===hostName} />
+                        <PlayerBox p={p} key={p.gamePlayerId} host={p.name===hostName} team={setting.teamSize} />
                     )}
                 </div>
                 <div className="px-2 h-1/2 xl:h-full w-full xl:w-1/3">

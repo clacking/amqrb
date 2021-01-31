@@ -1,14 +1,14 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
 
-import Electron, { IpcRendererEvent } from 'electron';
-import { AMQEventsCommand } from './helper/AMQEvents';
+import Electron, { IpcRenderer, IpcRendererEvent } from 'electron';
+import { AMQEventsCommand, QuizNextVideoInfo } from './helper/AMQEvents';
 import { UserStatus } from './store/userStatusSlice';
 import {
     AMQEventsCommand, AMQEventCommands, LoginComplete, PlayerCount, GetAllSongName,
     GuessPhaseOver,
 } from './helper/AMQEvents';
-import { AllSong } from './interface/AMQQuiz.interface';
+import { AllSong, NextVideoInfo } from './interface/AMQQuiz.interface';
 import { AMQChatMessages } from './interface/AMQRoom.interface';
 
 declare global {
@@ -38,4 +38,5 @@ interface AMQGameReciveEvents {
     [PlayerReadyChange]: (e: IpcRendererEvent, data: {gamePlayerId: number, ready: boolean}) => void;
     [GameChatUpdate]: (e: IpcRendererEvent, data: AMQChatMessages) => void;
     [GuessPhaseOver]: (e: IpcRendererEvent) => void;
+    [QuizNextVideoInfo]: (e: IpcRendererEvent, data: NextVideoInfo) => void;
 }

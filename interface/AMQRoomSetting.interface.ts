@@ -77,18 +77,18 @@ export type RoomSetting = {
         randomOn: boolean,
         standardValue: number,
         randomValue: [
-            true,
-            true,
-            true,
-            true
+            boolean,
+            boolean,
+            boolean,
+            boolean
         ]
     },
     songDifficulity: {
         advancedOn: boolean,
         standardValue: {
-            easy: true,
-            medium: true,
-            hard: true
+            easy: boolean,
+            medium: boolean,
+            hard: boolean
         },
         advancedValue: [
             number,

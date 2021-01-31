@@ -36,7 +36,8 @@ export type AMQRoomSetup = {
     teamFullMap: any;
 }
 
-export type AMQSpectator = {
+// PlayerChangedToSpectator
+export type AMQChangeToSpectator = {
     spectatorDescription: {
         name: string;
         gamePlayerId: number | null;
@@ -46,6 +47,11 @@ export type AMQSpectator = {
         gamePlayerId: number | null;
     },
     isHost: boolean;
+}
+
+export type AMQSpectator = {
+    name: string;
+    gamePlayerId: number | null;
 }
 
 export type AMQInGamePlayer = {
