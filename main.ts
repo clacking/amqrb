@@ -24,6 +24,11 @@ ipcMain.handle('quit', () => {
     app.exit();
 });
 
+ipcMain.handle('loadConfig', async e => {
+    const isMac = os.platform()==='darwin';
+    return { isMac };
+});
+
 ipcMain.handle('pageLoaded', async e => {
     return await new Promise(resolve => {
         const saved = store.get('savedList') || [];

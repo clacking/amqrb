@@ -17,8 +17,6 @@ const Title = styled.p`
 `;
 
 const TitleBar = () => {
-    const router = useRouter();
-
     return (
         <Bar className="flex justify-between pl-8 text-gray-100 inline-block align-middle relative">
             <div></div>

@@ -91,7 +91,7 @@ const Video = ({songId, videoBuf, songCount}:
     const video = videos[songCount-1];
 
     return (
-        <div className="relative" style={{width: '720px', height: '1280px'}}>
+        <div className="relative" style={{width: '480px', height: '854px'}}>
             <VideoOverlay playLength={video.startPont} />
         </div>
     );
@@ -153,6 +153,7 @@ const AnswerBox = ({songs, answerable, songCount}:
                     <div></div>
                 )
             }
+            <span>{answer===answerCheck ? 'submitted' : ''}</span>
             <button onClick={copyAnswer}>Copy</button>
         </div>
     );
@@ -227,7 +228,7 @@ const AMQQuiz = () => {
                     <button onClick={lobbyVote} className="px-4 py-1"><FaLessThan /></button>
                 </div>
             </header>
-            <main className="flex flex-col xl:flex-row">
+            <main className="w-full h-full flex flex-grow flex-col xl:flex-row">
                 <div className="flex flex-row">
                     <AnswerBox songs={songs} answerable={answerable} songCount={songCount} />
                 </div>

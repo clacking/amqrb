@@ -34,10 +34,13 @@ const icon = {
 
 function MainPage() {
     const [loading, setLoading] = useState(true);
+    const [config, setConfig] = useState({});
 
     useEffect(() => {
         const fetcher = async () => {
             window.electron.send('windowLoaded');
+            const settings = await window.electron.invoke('loadConfig');
+            setConfig(settings);
             setLoading(false);
         }
         fetcher();
