@@ -3,6 +3,8 @@
  */
 import { EventEmitter } from 'events';
 import { default as io } from 'socket.io-client';
+import HttpsProxyAgent from 'https-proxy-agent';
+import { parse } from 'url';
 import { Logger } from './Logger';
 
 const AMQ_WSENDPOINT = 'wss://socket.animemusicquiz.com';
@@ -22,7 +24,8 @@ export const getGameSocket = (): SocketIOClient.Socket => {
 export const coreEmitter = new AMQEventEmitter();
 
 export const emitEvent = (event: string, data: any) => {
-    coreEmitter.emit('core', {event, data});
+    coreEmitter.emit('ipcBridge', {event, data});
+    coreEmitter.emit(event, data);
 }
 
 export const initilizeGameSocket = (port: string|number, token: string): SocketIOClient.Socket => {
@@ -31,6 +34,8 @@ export const initilizeGameSocket = (port: string|number, token: string): SocketI
         reconnection: true,
         upgrade: true,
         transports: ['websocket'],
+        // @ts-ignore
+        agent: proxy,
         transportOptions: { polling: { extraHeaders: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
         }}},

@@ -16,6 +16,7 @@ export const roombrowser = 'roombrowser';
 export const quiz = 'quiz';
 export const library = 'library';
 export const social = 'social';
+export const avatar = 'avatar';
 
 // comments mean EvenType (Sending event)
 export const LoginComplete = 'login complete';
@@ -27,6 +28,8 @@ export const RankedScoreUpdate = 'ranked score update'; // quiz?
 export const ForceLogOff = 'force logoff';
 export const UnknownError = 'unknown error';
 export const RankedGameStateChange = 'ranked game state change';
+export const PatreonChanged = 'patreon changed';
+export const TicketUpdate = 'ticket update';
 export const SendGameChatMessage = 'game chat message'; //lobby send chat
 export const GameChatMessage = 'Game Chat Message'; //lobby
 export const GameChatUpdate = 'game chat update'; //lobby
@@ -91,6 +94,9 @@ export const ExpandLibraryClose = 'expandLibrary closed'; // library
 export const GetLeaderboard = 'get leaderboard level entries'; // social
 export const StopLeaderboard = 'stop leaderboard listning'; // social
 export const EmoteUnlocked = 'emote unlocked';
-export const UnlockAvatar = 'unlock avatar';
+export const UnlockAvatar = 'unlock avatar'; //avatar
 export const TicketRollResult = 'ticket roll result';
 export const ForceLogoff = 'force logoff';
+export const AllOnlineUsers = 'all online users';
+export const StopTrackingOnlineUsers = 'stop tracking online users'; // social
+export const UseAvatar = 'use avatar'; // avatar

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import AnimeData from '../components/animedata';
+import AnimeData from './AnimeData';
 import { title } from 'process';
-import TitleBar from './titlebar';
 
 const UserQuery = gql`
 query ($userId: Int, $userName: String, $type: MediaType) {
@@ -62,11 +61,11 @@ const UserList = ({ username }: { username: string }) => {
     const lists = data.MediaListCollection.lists;
 
     return (
-        <div className="overflow-scroll h-full">
+        <div className="overflow-y-auto h-full w-full p-2">
             { //@ts-ignore
             lists.map(({name, entries}) => (
                 <div key={name}>
-                    <h1 className="sticky top-0 bg-white">{name} ({entries.length})</h1>
+                    <h1 className="sticky top-0 bg-black bg-opacity-25">{name} ({entries.length})</h1>
                     { //@ts-ignore
                         entries.map(({media}) => (
                             <AnimeData key={media.id} animeId={media.id} coverImage={media.coverImage.large}
@@ -89,11 +88,11 @@ const FetchUserAnilist = () => {
     }
 
     return (
-        <div className="main">
+        <div className="h-full w-full flex flex-col">
             <p>
                 <span>AniListのユーザー名を入れてね →</span>
-                <input type="text" value={name} className="border px-4 py-2 mx-2" onChange={e => setName(e.target.value) } />
-                <button className="bg-green-400 px-4 py-2 text-white" onClick={() => getUser()}>取得</button>
+                <input type="text" value={name} className="border px-4 py-2 mx-2 text-black" onChange={e => setName(e.target.value) } />
+                <button className="bg-green-400 px-4 py-2 text-white" onClick={() => getUser()}>Fetch</button>
             </p>
             <UserList username={req} />
         </div>

@@ -62,25 +62,25 @@ export interface NextSong {
 }
 
 // QuizAnswer
-export interface QuizAnswer {
+export interface IQuizAnswer {
     answer: string;
     success: boolean;
 }
 
+export interface IPlayerAnswer {
+    gamePlayerId: number;
+    pose: number;
+    answer: string;
+}
+
 // PlayerAnswers
-export interface PlayerAnswers {
-    answers: {
-        [key: number]: {
-            gamePlayerId: number;
-            pose: number;
-            answer: string;
-        }
-    }
+export interface IPlayerAnswers {
+    answers: IPlayerAnswers[];
     progressBarState: ProgressBarState | null;
 }
 
 // AnswerResults
-export interface AnswerResults {
+export interface IAnswerResults {
     groupMap: {};
     players: {};
     progressBarState: ProgressBarState;

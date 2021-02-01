@@ -2,6 +2,7 @@
  * Custom AMQ Client state manager.
  */
 import fetch from 'node-fetch';
+import { ipcMain } from 'electron';
 import { LoginComplete, PlayerCount, ServerRestart, PopoutMessage,
     GetRooms, HostRoom, HostSoloGame, AMQEventType } from './AMQEvents';
 import { UserState } from './AMQ.interface';
@@ -10,7 +11,7 @@ import { Logger } from './Logger';
 import { createGameRoom } from './AMQRoom';
 import { browseRooms } from './AMQBrowser';
 import { initializeChat } from './AMQChat';
-import { ipcMain } from 'electron';
+import { quizGame } from './AMQQuiz';
 
 const AMQ_ENDPOINT = 'https://animemusicquiz.com';
 
@@ -54,12 +55,9 @@ export async function AMQLoginToken (username: string, password: string): Promis
  */
 export function initializeAMQGame (port: number|string, token: string) {
     initilizeGameSocket(port, token);
-    const events = [
-        LoginComplete, PlayerCount, ServerRestart, PopoutMessage
-    ];
 
-    // Add game handlers
-    events.forEach(s => addCommandHandler(s));
+    // add event hooks
+    quizGame();
 
     coreEmitter.on(LoginComplete, () => Logger.info('Logged in to AMQ game.'));
     coreEmitter.on('userEvent', userEventHandler);
@@ -68,15 +66,7 @@ export function initializeAMQGame (port: number|string, token: string) {
 function userEventHandler(d: any) {
     const io = getGameSocket();
 
-    if (d.command === GetRooms) {
-        browseRooms();
-        io.emit('command', d);
-    } else if (d.command === HostSoloGame || d.command === HostRoom) {
-        createGameRoom(d.data);
-        initializeChat();
-    } else {
-        io.emit('command', d);
-    }
+    io.emit('command', d);
 }
 
 // Initial point of EE/Sockets.
@@ -89,7 +79,7 @@ export function bootstrapAMQGame () {
             console.log('LOGGED IN', port);
             initializeAMQGame(port, token);
 
-            coreEmitter.on('core', d => {
+            coreEmitter.on('ipcBridge', d => {
                 e.sender.send(d.event, d.data);
             });
             e.reply('amqLoggedIn');
@@ -100,7 +90,7 @@ export function bootstrapAMQGame () {
     });
 
     ipcMain.on('amqEmit', async (e, d) => {
-        console.log(d);
+        Logger.info('User emit: %o', d);
         const data = d[0];
         coreEmitter.emit('userEvent', data);
     });

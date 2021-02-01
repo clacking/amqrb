@@ -11,13 +11,17 @@ import {
 } from '../helper/AMQEvents';
 import { GameContext } from './AMQGameContainer';
 import AMQChat from './AMQChat';
-import { AllSong, NextVideoInfo } from '../interface/AMQQuiz.interface';
+import {
+    AllSong, IAnswerResults, NextVideoInfo, IPlayerAnswers, IPlayerAnswer, IQuizAnswer
+} from '../interface/AMQQuiz.interface';
 import { count } from 'console';
+
+type QuizPhases = 'pregame' | 'guess' | 'guessover' | 'result' | 'gameover';
 
 const PlayerList = () => {}
 
-const VideoPlayer = ({src, playControl, startPoint, volume, visible}:
-    {src: string, playControl: boolean, startPoint: number, volume: number, visible: boolean}
+const VideoPlayer = ({src, phase, startPoint, volume=0.5}:
+    {src: string, phase: QuizPhases, startPoint: number, volume?: number}
 ) => {
     const ref = useRef<HTMLVideoElement>(null);
 
@@ -26,13 +30,12 @@ const VideoPlayer = ({src, playControl, startPoint, volume, visible}:
     }, [src]);
 
     useEffect(() => {
-        if (playControl) ref.current!.play();
+        if (phase!=='pregame') {
+            ref.current!.currentTime = startPoint;
+            ref.current!.play();
+        }
         else ref.current!.pause();
-    }, [playControl]);
-
-    useEffect(() => {
-        ref.current!.currentTime = startPoint;
-    }, [startPoint]);
+    }, [phase]);
 
     useEffect(() => {
         ref.current!.volume = volume;
@@ -43,39 +46,45 @@ const VideoPlayer = ({src, playControl, startPoint, volume, visible}:
     );
 }
 
-const VideoOverlay = ({playLength}:
-    {playLength: number}
+const VideoOverlay = ({playLength, phase}:
+    {playLength: number, phase: QuizPhases}
 ) => {
     const [countdown, setCountdown] = useState(playLength);
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            if (countdown>0) setCountdown(countdown-1);
-        }, 1000);
+        if (phase==='guess') {
+            const timeout = setTimeout(() => {
+                if (countdown>0) setCountdown(countdown-1);
+            }, 1000);
 
-        return () => clearTimeout(timeout);
-    }, [countdown]);
+            return () => clearTimeout(timeout);
+        }
+    }, [countdown, phase]);
 
     return (
-        <div className="w-full h-full absolute z-10">
+        <div className={`w-full h-full absolute z-10 ${phase!=='result' && 'bg-gray-800'}`}>
             <div>{countdown}</div>
         </div>
     );
 }
 
-const Video = ({songId, videoBuf, songCount}:
-    {songId: number, videoBuf: boolean, songCount: number}
+const Video = ({songId, phase, songCount}:
+    {songId: number, phase: QuizPhases, songCount: number}
 ) => {
-    const [play, setPlay] = useState(false);
     // video infos
-    const [videoSrc, setVideoSrc] = useState('');
+    const [videoSrc, setVideoSrc] = useState<Map<number, string>>(new Map());
     const [startPoint, setStartPoint] = useState(0);
-    const [visible, setVisible] = useState(false);
 
-    // all video info
-    // TODO: put it in main process
-    const [vcount, setVcount] = useState(0);
     const [videos, setVideos] = useState<NextVideoInfo[]>([]);
+
+    useEffect(() => {
+        const setvideo = (e: any, d: any) => {
+            setVideoSrc(new Map(videoSrc).set(d.id, d.url));
+        }
+        window.electron.on('amqVideo', setvideo);
+
+        return () => window.electron.removeAllListeners('amqVideo');
+    }, [videoSrc]);
 
     useEffect(() => {
         const nextVideo = (e: any, d: NextVideoInfo) => {
@@ -89,16 +98,22 @@ const Video = ({songId, videoBuf, songCount}:
     }, [songId]);
 
     const video = videos[songCount-1];
+    const currentSrc = videoSrc.get(video?.videoInfo.id || 0);
+
+    if (!video || !currentSrc) return (
+        <div className="relative" style={{width: '640px', height: '360px'}}>waiting buffer...</div>
+    );
 
     return (
-        <div className="relative" style={{width: '480px', height: '854px'}}>
-            <VideoOverlay playLength={video.startPont} />
+        <div className="relative" style={{width: '640px', height: '360px'}}>
+            <VideoOverlay playLength={video.playLength} phase={phase} />
+            <VideoPlayer src={currentSrc} phase={phase} startPoint={startPoint} />
         </div>
     );
 }
 
-const AnswerBox = ({songs, answerable, songCount}:
-    {songs: string[], answerable: boolean, songCount: number}
+const AnswerBox = ({songs, phase, songCount}:
+    {songs: string[], phase: QuizPhases, songCount: number}
 ) => {
     const [skip, setSkip] = useState(false);
     const [answer, setAnswer] = useState(''); // Player answer
@@ -106,7 +121,7 @@ const AnswerBox = ({songs, answerable, songCount}:
 
     // Answer response
     useEffect(() => {
-        const checkAnswer = (e:any, d: any) => {
+        const checkAnswer = (e:any, d: IQuizAnswer) => {
             setAnswerCheck(d.answer);
         }
         window.electron.on(QuizAnswer, checkAnswer);
@@ -114,11 +129,13 @@ const AnswerBox = ({songs, answerable, songCount}:
         return () => window.electron.removeListener(QuizAnswer, checkAnswer);
     });
 
-    // Reset
     useEffect(() => {
-        setAnswer('');
-        setSkip(false);
-    }, [songCount]);
+        if (phase==='guess') {
+            setAnswer('');
+            setSkip(false);
+        }
+        if (phase==='guessover') {}
+    }, [phase]);
 
     const submitAnswer = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
@@ -141,9 +158,10 @@ const AnswerBox = ({songs, answerable, songCount}:
     }
 
     return (
-        <div className="flex flex-row">
+        <div className="flex flex-row h-6">
             <button onClick={submitSkip}>{skip?'✔':''} Skip</button>
-            <input className="flex flex-grow text-white border border-white border-opacity-30 bg-gray-800 p-1" type="text" value={answer} disabled={!answerable}
+            <input className="flex flex-grow text-white border border-white border-opacity-30 bg-gray-800 p-1" type="text"
+                value={answer} disabled={phase!=='guess'}
                 onChange={e=>setAnswer(e.target.value)} onKeyPress={submitAnswer}
             />
             {
@@ -153,7 +171,7 @@ const AnswerBox = ({songs, answerable, songCount}:
                     <div></div>
                 )
             }
-            <span>{answer===answerCheck ? 'submitted' : ''}</span>
+            <span>{(answer && answer===answerCheck) ? 'submitted' : ''}</span>
             <button onClick={copyAnswer}>Copy</button>
         </div>
     );
@@ -161,61 +179,59 @@ const AnswerBox = ({songs, answerable, songCount}:
 
 const AMQQuiz = () => {
     const { changeView } = useContext(GameViewContext);
-    const { chat, inGamePlayer } = useContext(GameContext);
+    const { chat, inGamePlayer, setting } = useContext(GameContext);
 
+    const [phase, setPhase] = useState<QuizPhases>('pregame');
     const [songCount, setSongCount] = useState(0);
     const [songs, setSongs] = useState<string[]>([]);
-    const [playerAnswers, setPlayerAnswers] = useState([]);
-    const [quizReady, setQuizReady] = useState(false);
-    const [answerable, setAnswerable] = useState(false);
+    const [playerAnswers, setPlayerAnswers] = useState<IPlayerAnswer[]>([]);
     const [waitingBuf, setWaitingBuf] = useState(false);
 
     // Initialize song list
     useEffect(() => {
-        const song = (e: any, arg: AllSong) => {
-            setSongs(arg.names);
-        }
+        const song = (e: any, arg: AllSong) => setSongs(arg.names);
         window.electron.once(GetAllSongName, song);
     }, []);
 
     useEffect(() => {
-        const ans = (e: any, d: any) => {}
+        const ans = (e: any, d: IAnswerResults) => {
+        }
         window.electron.on(AnswerResults, ans);
 
-        const phasecheck = (e: any) => {
-            setAnswerable(false);
+        const playerAnswers = (e: any, d: IPlayerAnswers) => {
+
         }
-        window.electron.on(GuessPhaseOver, phasecheck);
+        window.electron.on(PlayerAnswers, playerAnswers);
+
+        const guessphase = (e: any) => setPhase('guessover');
+        window.electron.on(GuessPhaseOver, guessphase);
 
         const playnext = (e: any, d: any) => {
-            setAnswerable(true);
+            setPhase('guess');
             setSongCount(d.songNumber);
         }
         window.electron.on(PlayNextSong, playnext);
 
-        return () => {
-            window.electron.removeAllListeners(GuessPhaseOver);
-            window.electron.removeAllListeners(AnswerResults);
-        }
-    });
-
-    useEffect(() => {
         const buffer = (e: any, d: any) => {
             setWaitingBuf(true);
         }
         window.electron.on(QuizWaitingBuffering, buffer);
 
         return () => {
+            window.electron.removeAllListeners(GuessPhaseOver);
+            window.electron.removeAllListeners(PlayerAnswers);
+            window.electron.removeAllListeners(AnswerResults);
+            window.electron.removeAllListeners(PlayNextSong);
             window.electron.removeAllListeners(QuizWaitingBuffering);
         }
-    }, [waitingBuf]);
+    });
 
     const leave = () => {
         window.electron.send('amqEmit', { command: LeaveGame, type: lobby });
         changeView('default');
     }
 
-    const pause = () => {}
+    const pauseVote = () => {}
 
     const lobbyVote = () => {}
 
@@ -224,13 +240,17 @@ const AMQQuiz = () => {
             <header className="flex w-full p-2 justify-between">
                 <div>
                     <button onClick={leave} className="px-4 py-1 border">Leave</button>
-                    <button onClick={pause} className="px-4 py-1"><FaPause /></button>
+                    <button onClick={pauseVote} className="px-4 py-1"><FaPause /></button>
                     <button onClick={lobbyVote} className="px-4 py-1"><FaLessThan /></button>
+                </div>
+                <div>
+                    {songCount}
                 </div>
             </header>
             <main className="w-full h-full flex flex-grow flex-col xl:flex-row">
-                <div className="flex flex-row">
-                    <AnswerBox songs={songs} answerable={answerable} songCount={songCount} />
+                <div className="flex flex-col flex-grow">
+                    <Video songId={songCount} phase={phase} songCount={songCount} />
+                    <AnswerBox songs={songs} phase={phase} songCount={songCount} />
                 </div>
                 <div className="flex">
                     <AMQChat chat={chat} />

@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { useDispatch } from 'react-redux';
 import currentListSlice, { AniListStatus } from '../store/listSlice';
-import AnimeData from '../components/animedata';
+import AnimeData from './AnimeData';
 import { AuthContext } from './AnilistAuth';
 
 const UAL = gql`

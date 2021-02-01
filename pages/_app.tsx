@@ -2,11 +2,11 @@ import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { Provider } from 'react-redux';
 import { ChakraProvider } from '@chakra-ui/react';
-import TitleBar from '../components/titlebar';
 import createStore from '../store/store';
 import './main.css'
 import 'react-tabs/style/react-tabs.css';
 
+const TitleBar = dynamic(() => import('../components/Titlebar'), {ssr: false});
 const AnilistAuthProvider = dynamic(() => import('../components/AnilistAuth'), {ssr: false});
 
 function App({ Component, pageProps }: AppProps) {

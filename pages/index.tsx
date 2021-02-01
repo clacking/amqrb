@@ -2,11 +2,11 @@ import { useState, useEffect, useContext } from 'react';
 // @ts-ignore
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import styled from 'styled-components';
-import { BsPeopleCircle, BsFileEarmarkArrowDown, BsPieChartFill, BsFillCollectionPlayFill } from "react-icons/bs";
-
+import { BsPeopleCircle, BsFileEarmarkArrowDown, BsPieChartFill, BsFillCollectionPlayFill, BsGear } from "react-icons/bs";
 import AnilistMain from '../components/AnilistMain';
 import FetchUserAnilist from '../components/FetchUserAnilist';
 import AMQIndex from '../components/AMQIndex';
+import AppSetting from '../components/AppSetting';
 
 const Main = styled.main`
     position: absolute;
@@ -64,6 +64,9 @@ function MainPage() {
                 <Tab className="px-2 text-center text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
                     <BsPieChartFill style={icon} />
                 </Tab>
+                <Tab className="px-2 text-center text-white hover:bg-gray-900 cursor-pointer" style={TabButton}>
+                    <BsGear style={icon} />
+                </Tab>
                 <div className="text-center text-gray-400 absolute bottom-0 w-full font-light select-none">
                     0.0.1
                 </div>
@@ -81,6 +84,9 @@ function MainPage() {
                 </TabPanel>
                 <TabPanel>
                     <p>nai</p>
+                </TabPanel>
+                <TabPanel>
+                    <AppSetting />
                 </TabPanel>
             </Main>
         </Tabs>

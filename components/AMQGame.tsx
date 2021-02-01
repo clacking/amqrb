@@ -35,33 +35,34 @@ const AMQGame = () => {
 
     const change = (view: GameViews) => setView(view);
 
+    // Global notifications
     useEffect(() => {
         const showEvent = (e: any, d: any) => {
             toast({
                 title: `Sever restart at ${d.time} min`,
                 description: `${d.msg}`,
                 status: 'warning',
-                isClosable: true
+                isClosable: true,
+                position: 'bottom-right',
             });
         }
         window.electron.on(ServerRestart, showEvent);
 
-        return () => window.electron.removeAllListeners(ServerRestart);
-    });
-
-    useEffect(() => {
         const popup = (e: any, d: any) => {
             toast({
                 title: `${d.header}`,
                 description: `${d.message}`,
                 status: 'info',
-                isClosable: true
+                isClosable: true,
+                position: 'bottom-right',
             });
         }
-
         window.electron.on(PopoutMessage, popup);
-        
-        return () => window.electron.removeAllListeners(PopoutMessage);
+
+        return () => {
+            window.electron.removeAllListeners(ServerRestart);
+            window.electron.removeAllListeners(PopoutMessage);
+        }
     });
 
     useEffect(() => {
