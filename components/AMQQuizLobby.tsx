@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, ModalHeader, useDisclosure } from '@chakra-ui/react';
-import { useUserStatus } from '../store/selectors';
 import { GameViewContext } from './AMQGame';
 import { GameContext } from './AMQGameContainer';
 import { getAvatar, getBackground } from '../helper/AvatarImage';
@@ -22,9 +21,9 @@ const PlayerBox = ({p, host, team}: {p: AMQRoomPlayer, host: boolean, team: numb
             <div className="p-1">
                 <div className="flex justify-between px-2">
                     <span className="">{level}</span>
-                    { team>1 ?
+                    { team>1 && (
                     <span className="select-none px-1">{p.teamNumber}</span>
-                    : ''}
+                    )}
                     <span className="text-green-400 select-none">
                         {host ? 'Host' : (ready ? '✔' : '')}
                     </span>
@@ -39,9 +38,8 @@ const PlayerBox = ({p, host, team}: {p: AMQRoomPlayer, host: boolean, team: numb
 
 const AMQQuiz = () => {
     const { changeView } = useContext(GameViewContext);
-    const { chat, player, spectator, hostName, gameId, setting } = useContext(GameContext);
+    const { chat, player, spectator, hostName, gameId, setting, isHost } = useContext(GameContext);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { state } = useUserStatus();
     const [ready, setReady] = useState(false);
 
     const backLobby = () => {
@@ -49,7 +47,6 @@ const AMQQuiz = () => {
         window.electron.send('amqEmit', { command: LeaveGame, type: lobby });
     }
 
-    const isHost = state.self===hostName;
     const isStartable = player.filter(u => u.ready).length===player.length;
     const startGame = () => {
         if (isHost) {
@@ -66,7 +63,14 @@ const AMQQuiz = () => {
                 <div>
                     <button onClick={backLobby} className="px-4 py-1 border">Back</button>
                     <span className="mx-2">
-                        #{gameId} {setting.roomName} ({player.length}/{setting.roomSize}) {setting.teamSize>1 && `(TeamSize: ${setting.teamSize})`}
+                        <span>
+                            #{gameId} {setting.roomName} ({player.length}/{setting.roomSize})
+                        </span>
+                        { setting.teamSize>1 &&
+                        <span className="ml-2">
+                            {`(TeamSize: ${setting.teamSize})`}
+                        </span>
+                        }
                     </span>
                 </div>
                 <div>

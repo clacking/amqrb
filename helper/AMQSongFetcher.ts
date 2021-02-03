@@ -1,7 +1,10 @@
 import fetch from 'node-fetch';
+import { existsSync } from 'fs';
 import { writeFile } from 'fs/promises';
-import { join } from 'path';
+import { join, extname } from 'path';
+import { createHash } from 'crypto';
 import { VIDEO_CACHE } from './AppSettings';
+import { Logger } from './Logger';
 
 const musicLink = (id: number | string) => `https://animemusicquiz.com/moeVideo.webm?id=${id}`;
 
@@ -9,6 +12,8 @@ const musicLink = (id: number | string) => `https://animemusicquiz.com/moeVideo.
  * Fetch music link
  * @param id music id
  * @param jar session cookie
+ * 
+ * @return filename
  */
 export async function fetchSong (id: number | string, jar: string): Promise<string> {
     try {
@@ -18,13 +23,18 @@ export async function fetchSong (id: number | string, jar: string): Promise<stri
                 'cookie': jar
             }
         });
+        const originalUrl = res.url;
+        const fileExt = extname(originalUrl);
         const file = await res.buffer();
-        const storePath = join(VIDEO_CACHE, `${id}.webm`);
-        await writeFile(storePath, file);
+        const urlHash = createHash('sha1').update(originalUrl).digest('hex');
+        const filename = `${urlHash}${fileExt}`;
 
-        return storePath;
+        const storePath = join(VIDEO_CACHE, filename);
+        await writeFile(storePath, file);
+        Logger.info(`Video loaded: %o`, { id, originalUrl, filename });
+        return filename;
     } catch (e) {
-        console.error(e);
+        Logger.error(e);
         throw new Error('Failed to fetch music link.');
     }
 }

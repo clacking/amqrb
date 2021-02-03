@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext, createContext } from 'react';
+import { useUserStatus } from '../store/selectors';
 import { GameViewContext } from './AMQGame';
 import { RoomSetting } from '../interface/AMQRoomSetting.interface';
-import { GameStart } from '../interface/AMQQuiz.interface';
+import { IGameStarting } from '../interface/AMQQuiz.interface';
 import { AMQChatMesasge, AMQChatMessages, AMQInGamePlayer, AMQRoomPlayer, AMQSpectator } from '../interface/AMQRoom.interface';
 import {
     GameChatUpdate, HostGame, SpectatorChangeToPlayer,
@@ -18,9 +19,10 @@ type GameContextStates = {
     gameId: number;
     spectator: AMQSpectator[];
     player: AMQRoomPlayer[];
-    inGamePlayer: AMQInGamePlayer[];
+    quizInitial?: IGameStarting;
     teamMap: any;
     hostName: string;
+    isHost: boolean;
 }
 
 export const GameContext = createContext<GameContextStates>({} as GameContextStates);
@@ -31,6 +33,7 @@ export const GameContext = createContext<GameContextStates>({} as GameContextSta
 const AMQGameContainer = () => {
     const { view, changeView } = useContext(GameViewContext);
     const [chat, setChat] = useState<AMQChatMesasge[]>([]);
+    const { state } = useUserStatus();
 
     // Game states
     const [hostname, setHostname] = useState('');
@@ -39,7 +42,7 @@ const AMQGameContainer = () => {
     const [not, setNOT] = useState(0); // numberOfTeams
     const [spectator, setSpect] = useState<AMQSpectator[]>([]);
     const [player, setPlayer] = useState<AMQRoomPlayer[]>([]);
-    const [inGamePlayer, setInGamePlayer] = useState<AMQInGamePlayer[]>([]);
+    const [quizInitial, setQuizInitial] = useState<IGameStarting>();
     const [teamMap, setTeamMap] = useState<any>();
 
     // Room setup for join/host
@@ -137,8 +140,8 @@ const AMQGameContainer = () => {
 
     // GameStarting
     useEffect(() => {
-        const gameStart = (e: any, d: GameStart) => {
-            setInGamePlayer(d.players);
+        const gameStart = (e: any, d: IGameStarting) => {
+            setQuizInitial(d);
             changeView('quiz');
         }
         window.electron.on(GameStarting, gameStart);
@@ -162,10 +165,12 @@ const AMQGameContainer = () => {
 
     if (!setting) return <span>...</span>
 
+    const isHost = hostname===state.self;
+
     return (
         <GameContext.Provider value={{
-            setting, chat, not, gameId, spectator, player, teamMap, inGamePlayer,
-            hostName: hostname
+            setting, chat, not, gameId, spectator, player, teamMap, quizInitial,
+            hostName: hostname, isHost
         }}>
             <>
             {

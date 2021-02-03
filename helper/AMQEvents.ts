@@ -88,6 +88,7 @@ export const AnswerResults = 'answer results'; //quiz
 export const TeamMemberAnswer = 'team member answer'; //quiz
 export const StartReturnLobbyVote = 'start return lobby vote'; // quiz
 export const ReturnLobbyVoteResult = 'return lobby vote result'; //quiz
+export const SongFeedback = 'song feedback';
 export const JoinRankedGame = 'join ranked game'; //roombrowser
 export const ExpandLibrary = 'expandLibrary questions'; // library
 export const ExpandLibraryClose = 'expandLibrary closed'; // library

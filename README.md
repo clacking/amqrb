@@ -10,7 +10,13 @@ Custom [AMQ](https://animemusicquiz.com/) client.
 
 * Game logger, analyze
 
-* media caching, don't burn the catbox
+* media caching, stable loading.
+
+* AniList viewer
+
+## Todo
+
+* Replace next.js to react or preact.
 
 ## req
 

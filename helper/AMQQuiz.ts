@@ -19,19 +19,20 @@ export function quizGame () {
 
     // quiz injections
     coreEmitter.on(GameStarting, () => {
-        // load songs
-        coreEmitter.on(QuizNextVideoInfo, async (d: NextVideoInfo) => {
-            if (!CookieJar) throw new Error('No cookie.');
-            const songId = d.videoInfo.id;
-            const { videoMap } = d.videoInfo;
-            const video = videoMap.catbox?.[720] || videoMap.catbox?.[0];
-
-            // db/cache
-
-            const song = await fetchSong(video!, CookieJar);
-            io.emit('command', { type: quiz, command: VideoReady, data: { songId } });
-            emitEvent('amqVideo', { id: songId, url: `amq://${video}.webm` });
-        });
     });
 
+    // load songs
+    const loaded = async (d: NextVideoInfo) => {
+        if (!CookieJar) throw new Error('No cookie.');
+        const songId = d.videoInfo.id;
+        const { videoMap } = d.videoInfo;
+        const video = videoMap.catbox?.[720] || videoMap.catbox?.[480] || videoMap.catbox?.[0];
+
+        // db/cache
+
+        const song = await fetchSong(video!, CookieJar);
+        io.emit('command', { type: quiz, command: VideoReady, data: { songId } });
+        emitEvent('amqVideo', { id: songId, url: `amq://${song}` });
+    };
+    coreEmitter.on(QuizNextVideoInfo, loaded);
 }

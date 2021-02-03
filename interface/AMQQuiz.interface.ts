@@ -9,6 +9,42 @@ interface ProgressBarState {
     played: number;
 }
 
+interface GroupMap {
+    [key: number]: number[];
+}
+
+interface QuizResultPlayer {
+    correct: boolean;
+    gamePlayerId: number;
+    level: number;
+    listStatus: number;
+    pose: number;
+    position: number;
+    positionSlot: number;
+    score: number;
+    showScore: number;
+}
+
+interface SongInfo {
+    animeNames: {
+        english: string;
+        romaji: string;
+    };
+    annId: number;
+    artist: string;
+    highRisk: number;
+    songName: string;
+    type: number;
+    typeNumber: number;
+    urlMap: {
+        [key: string]: {
+            0?: string;
+            480?: string;
+            720?: string;
+        };
+    };
+}
+
 /**
  * Event interfaces
  */
@@ -20,12 +56,10 @@ export interface AllSong {
 }
 
 // GameStarting
-export interface GameStart {
+export interface IGameStarting {
     gameMode: string;
     showSelection: number;
-    groupSlotMap: {
-        [key: string]: number[];
-    };
+    groupSlotMap: GroupMap;
     players: AMQInGamePlayer[];
 }
 
@@ -75,16 +109,16 @@ export interface IPlayerAnswer {
 
 // PlayerAnswers
 export interface IPlayerAnswers {
-    answers: IPlayerAnswers[];
+    answers: IPlayerAnswer[];
     progressBarState: ProgressBarState | null;
 }
 
 // AnswerResults
 export interface IAnswerResults {
-    groupMap: {};
-    players: {};
+    groupMap: GroupMap;
+    players: QuizResultPlayer[];
     progressBarState: ProgressBarState;
-    songInfo: {};
+    songInfo: SongInfo;
     watched: boolean;
 }
 
@@ -109,18 +143,31 @@ export interface QuizOver {
 }
 
 // ReturnLobbyVoteStart
-export interface ReturnLobbyVoteStart {
+export interface IReturnLobbyVoteStart {
     invokingHost: string;
     voteDuration: number;
 }
 
 // ReturnLobbyVoteResult
-export interface ReturnLobbyVoteResult {
+export interface IReturnLobbyVoteResult {
     passed: boolean;
     timeout?: number;
 }
 
 // QuizWaitingBuffering
-export interface QuizWaitingBuffering {
+export interface IQuizWaitingBuffering {
     firstSong: boolean;
 }
+
+// QuizEndResult
+export interface IQuizEndResult {
+    progressBarState: ProgressBarState;
+    resultStates: {
+        endPosition: number;
+        gamePlayerId: number;
+        pose: number;
+    }[];
+}
+
+// QuizOverlayMessage
+export type IQuizOverlayMessage = string;
