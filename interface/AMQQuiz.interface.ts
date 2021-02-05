@@ -4,16 +4,16 @@ import { AMQInGamePlayer } from './AMQRoom.interface';
  * Util interfaces
  */
 
-interface ProgressBarState {
+export interface ProgressBarState {
     length: number;
     played: number;
 }
 
-interface GroupMap {
+export interface GroupMap {
     [key: number]: number[];
 }
 
-interface QuizResultPlayer {
+export interface QuizResultPlayer {
     correct: boolean;
     gamePlayerId: number;
     level: number;
@@ -25,7 +25,7 @@ interface QuizResultPlayer {
     showScore: number;
 }
 
-interface SongInfo {
+export interface ISongInfo {
     animeNames: {
         english: string;
         romaji: string;
@@ -118,7 +118,7 @@ export interface IAnswerResults {
     groupMap: GroupMap;
     players: QuizResultPlayer[];
     progressBarState: ProgressBarState;
-    songInfo: SongInfo;
+    songInfo: ISongInfo;
     watched: boolean;
 }
 

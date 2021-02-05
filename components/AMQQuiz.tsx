@@ -14,7 +14,7 @@ import {
 import { GameContext } from './AMQGameContainer';
 import AMQChat from './AMQChat';
 import {
-    AllSong, IAnswerResults, NextVideoInfo, IPlayerAnswers, IPlayerAnswer, IQuizAnswer, IQuizOverlayMessage
+    AllSong, IAnswerResults, NextVideoInfo, IPlayerAnswers, IPlayerAnswer, IQuizAnswer, IQuizOverlayMessage, ISongInfo
 } from '../interface/AMQQuiz.interface';
 
 type QuizPhases = 'pregame' | 'guess' | 'guessover' | 'result' | 'gameover';
@@ -24,6 +24,34 @@ const AMQQuizContext = createContext({});
 const PlayerStandingMap = () => {}
 
 const PlayerList = () => {}
+
+const QuizInfomationBox = ({phase, songCount, answer}: {phase: QuizPhases, songCount: number, answer?: ISongInfo}) => {
+    return (
+        <div className="w-full flex flex-row text-center h-14 my-1 bg-gray-800 text-white">
+            <div className="w-16 grid place-content-center bg-purple-900 ">
+                { songCount }
+            </div>
+            <div className="flex flex-col text-center w-full h-full">
+                { (phase==='result' && answer) ?
+                <>
+                    <span className="text-2xl">
+                        { answer.animeNames.romaji }
+                    </span>
+                    <span>
+                        { answer.artist } - { answer.songName }
+                        {' '}
+                        ({answer.type} {answer.typeNumber}) {answer.annId}
+                    </span>
+                </>
+                :
+                <span className="grid place-content-center">
+                    <span className="animate-spin select-none">🤔</span>
+                </span>
+                }
+            </div>
+        </div>
+    )
+}
 
 const VideoPlayer = ({src, phase, startPoint, volume=0.5}:
     {src: string, phase: QuizPhases, startPoint: number, volume?: number}
@@ -48,8 +76,10 @@ const VideoPlayer = ({src, phase, startPoint, volume=0.5}:
         ref.current!.volume = volume;
     }, [volume]);
 
+    const invisible = phase==='guess' || phase==='guessover';
+
     return (
-        <video className="w-full h-full absolute z-0" ref={ref} autoPlay={true} controls={false}>
+        <video className={`w-full h-full absolute z-0 ${invisible&&'invisible'}`} ref={ref} autoPlay={true} controls={false}>
             <span>Sound Only</span>
         </video>
     );
@@ -75,21 +105,19 @@ const VideoOverlay = ({playLength, phase}:
 
     return (
         <div className={`w-full h-full absolute z-10 ${phase!=='result' && 'bg-gray-800'}`}>
-            <span className="absolute p-2 bg-black bg-opacity-60">{message}</span>
-            { isGuess ?
+            { message && <span className="absolute p-2 bg-black bg-opacity-60">{message}</span> }
+            { isGuess &&
             <div className="grid h-full place-content-center">
                 <CountdownCircleTimer
                     isPlaying={isGuess} duration={playLength-1} colors={[['#5fa4d3', 1]]}
                 >
                     { ({ remainingTime }) =>
-                        <span className="text-4xl text-white">
+                        <span className="text-5xl text-white">
                             {phase==='guessover' ? 'Result' : remainingTime}
                         </span>
                     }
                 </CountdownCircleTimer>
             </div>
-            :
-            <div className="">result</div>
             }
         </div>
     );
@@ -151,6 +179,8 @@ const Video = ({songId, phase, songCount, volume}:
     );
 }
 
+const AutoCompleter = (input: string, suggests: string[]) => {}
+
 const AnswerBox = ({songs, phase, songCount}:
     {songs: string[], phase: QuizPhases, songCount: number}
 ) => {
@@ -194,12 +224,10 @@ const AnswerBox = ({songs, phase, songCount}:
         setSkip(!skip);
     }
 
-    const copyAnswer = async () => {
-        await navigator.clipboard.writeText(answer);
-    }
+    const copyAnswer = async () => await navigator.clipboard.writeText(answer);
 
     return (
-        <div className="flex flex-row h-8 m-1 text-white border border-white border-opacity-30 bg-gray-800 p-1">
+        <div className={`flex flex-row h-8 my-1 transition duration-500 text-white border border-white border-opacity-30 ${phase==='guess' ? 'bg-gray-900' : 'bg-gray-800'} p-1`}>
             <button onClick={submitSkip}>{skip?'✔':''} Skip</button>
             <input className="flex flex-grow bg-transparent text-center" type="text"
                 value={answer} disabled={phase!=='guess'}
@@ -275,7 +303,9 @@ const AMQQuiz = () => {
         }
         window.electron.on(QuizOver, gameover);
 
-        const endresult = (e: any, d: any) => {}
+        const endresult = (e: any, d: any) => {
+            setPhase('gameover');
+        }
         window.electron.on(QuizEndResult, endresult);
 
         return () => {
@@ -321,6 +351,7 @@ const AMQQuiz = () => {
             </header>
             <main className="w-full h-full flex flex-grow justify-between flex-col xl:flex-row p-4">
                 <div className="flex flex-col flex-grow">
+                    <QuizInfomationBox phase={phase} songCount={songCount} answer={result[songCount-1]?.songInfo} />
                     <Video songId={songCount} phase={phase} songCount={songCount} volume={volume} />
                     <AnswerBox songs={songs} phase={phase} songCount={songCount} />
                 </div>
