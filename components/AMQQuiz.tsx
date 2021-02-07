@@ -16,6 +16,7 @@ import AMQChat from './AMQChat';
 import {
     AllSong, IAnswerResults, NextVideoInfo, IPlayerAnswers, IPlayerAnswer, IQuizAnswer, IQuizOverlayMessage, ISongInfo
 } from '../interface/AMQQuiz.interface';
+import { receiveMessageOnPort } from 'worker_threads';
 
 type QuizPhases = 'pregame' | 'guess' | 'guessover' | 'result' | 'gameover';
 
@@ -33,7 +34,7 @@ const QuizInfomationBox = ({phase, songCount, answer}: {phase: QuizPhases, songC
             </div>
             <div className="flex flex-col text-center w-full h-full">
                 { (phase==='result' && answer) ?
-                <>
+                <span className="flex flex-col w-full">
                     <span className="text-2xl">
                         { answer.animeNames.romaji }
                     </span>
@@ -42,7 +43,7 @@ const QuizInfomationBox = ({phase, songCount, answer}: {phase: QuizPhases, songC
                         {' '}
                         ({answer.type} {answer.typeNumber}) {answer.annId}
                     </span>
-                </>
+                </span>
                 :
                 <span className="grid place-content-center">
                     <span className="animate-spin select-none">🤔</span>
@@ -53,13 +54,13 @@ const QuizInfomationBox = ({phase, songCount, answer}: {phase: QuizPhases, songC
     )
 }
 
-const VideoPlayer = ({src, phase, startPoint, volume=0.5}:
-    {src: string, phase: QuizPhases, startPoint: number, volume?: number}
+const VideoPlayer = ({src, phase, playLength=0, startPoint=0, volume=0.5, play}:
+    {src?: string, phase: QuizPhases, playLength?: number, startPoint?: number, volume?: number, play: boolean}
 ) => {
     const ref = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
-        ref.current!.src = src;
+        ref.current!.src = src || '';
     }, [src]);
 
     useEffect(() => {
@@ -67,19 +68,22 @@ const VideoPlayer = ({src, phase, startPoint, volume=0.5}:
             ref.current!.pause();
         }
         if (phase==='guess' || phase==='result') {
-            ref.current!.currentTime = startPoint;
-            ref.current!.play();
+            const timeAdjust = ref.current!.duration-(playLength-13);
+            const time = ( timeAdjust<0 ? 0 : timeAdjust ) * startPoint/100;
+            ref.current!.pause();
+            ref.current!.currentTime = isFinite(time) ? Math.floor(time) : 0;
+            if (play) ref.current!.play();
         }
-    }, [phase]);
+    }, [phase, play]);
 
     useEffect(() => {
         ref.current!.volume = volume;
     }, [volume]);
 
-    const invisible = phase==='guess' || phase==='guessover';
+    const invisible = phase==='guess' || phase==='guessover' || !play;
 
     return (
-        <video className={`w-full h-full absolute z-0 ${invisible&&'invisible'}`} ref={ref} autoPlay={true} controls={false}>
+        <video className={`w-full h-full absolute z-0 ${invisible&&'invisible'}`} ref={ref} controls={false}>
             <span>Sound Only</span>
         </video>
     );
@@ -128,7 +132,6 @@ const Video = ({songId, phase, songCount, volume}:
 ) => {
     // video infos
     const [videoSrc, setVideoSrc] = useState<Map<number, string>>(new Map());
-
     const [videos, setVideos] = useState<NextVideoInfo[]>([]);
 
     useEffect(() => {
@@ -160,21 +163,29 @@ const Video = ({songId, phase, songCount, volume}:
         }
     });
 
-    const video = videos[songCount-1];
-    const currentSrc = videoSrc.get(video?.videoInfo.id || 0);
+    const current = videos[songCount-1];
+    // Video switcher
+    const isEven = (songCount % 2) === 0 || songCount === 0;
+    // Fist Video
+    const oddId = isEven ? songCount+1 : songCount;
+    const oddVideo = videos[oddId-1];
+    const oddSrc = videoSrc.get(oddVideo?.videoInfo.id) || '';
+    // Second video
+    const evenId = isEven ? songCount : songCount+1;
+    const evenVideo = videos[evenId-1];
+    const evenSrc = videoSrc.get(evenVideo?.videoInfo.id) || '';
 
-    if (!video) return (
-        <div className="relative" style={{aspectRatio: '16 / 9'}}>waiting buffer...</div>
+    if (songCount===0) return (
+        <div className="relative" style={{aspectRatio: '16 / 9'}}>waiting game...</div>
     );
 
     return (
         <div className="relative" style={{aspectRatio: '16 / 9'}}>
-            <VideoOverlay playLength={video.playLength} phase={phase} />
-            { (!video || !currentSrc) ?
-            <div className="relative">waiting buffer...</div>
-            :
-            <VideoPlayer src={currentSrc} phase={phase} startPoint={video.startPont} volume={volume} />
-            }
+            <VideoOverlay playLength={current.playLength} phase={phase} />
+            <VideoPlayer src={oddSrc} phase={phase} playLength={oddVideo?.playLength}
+                startPoint={oddVideo?.startPont} volume={volume} play={!isEven} />
+            <VideoPlayer src={evenSrc} phase={phase} playLength={evenVideo?.playLength}
+                startPoint={evenVideo?.startPont} volume={volume} play={isEven} />
         </div>
     );
 }
