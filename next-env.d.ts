@@ -15,6 +15,7 @@ declare global {
     interface Window {
         electron: {
             invoke (channel: string, ...args: any[]): Promise<any>;
+            invoke (channel: string, ...args: any[]): Promise<any>;
             send (channel: string, ...args: any[]): void;
             on <E extends keyof AMQGameReciveEvents>(channel: E, callback: AMQGameReciveEvents[E]);
             on <E extends keyof AMQGameReciveEvents>(channel: E, ...args: Parameters<AMQGameReciveEvents[E]>);
@@ -29,6 +30,11 @@ declare global {
 
 interface AMQGameSendEvents {
     'amqEmit': (data: any) => void;
+}
+
+interface ElectronInvokeEvents {
+    'updateConfig': () => Promise<void>;
+    'loadConfig': () => Promise<void>;
 }
 
 interface AMQGameReciveEvents {
