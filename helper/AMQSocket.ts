@@ -3,8 +3,6 @@
  */
 import { EventEmitter } from 'events';
 import { default as io } from 'socket.io-client';
-import HttpsProxyAgent from 'https-proxy-agent';
-import { parse } from 'url';
 import { Logger } from './Logger';
 
 const AMQ_WSENDPOINT = 'wss://socket.animemusicquiz.com';

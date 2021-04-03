@@ -1,22 +1,21 @@
-import type { AppProps } from 'next/app';
-import dynamic from 'next/dynamic';
+import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ChakraProvider } from '@chakra-ui/react';
 import createStore from '../store/store';
 import './main.css'
 import 'react-tabs/style/react-tabs.css';
+import TitleBar from '../components/Titlebar';
+import AnilistAuthProvider from '../components/AnilistAuth';
+import Layout from './layout';
 
-const TitleBar = dynamic(() => import('../components/Titlebar'), {ssr: false});
-const AnilistAuthProvider = dynamic(() => import('../components/AnilistAuth'), {ssr: false});
-
-function App({ Component, pageProps }: AppProps) {
+function App() {
     return (
         <ChakraProvider>
             <div className="App relative bg-gray-900 text-white">
                 <Provider store={createStore()}>
                     <TitleBar />
                     <AnilistAuthProvider>
-                        <Component {...pageProps} />
+                        <Layout />
                     </AnilistAuthProvider>
                 </Provider>
             </div>
@@ -24,4 +23,4 @@ function App({ Component, pageProps }: AppProps) {
     )
 }
 
-export default App
+ReactDOM.render(<App />, document.querySelector('#root'));

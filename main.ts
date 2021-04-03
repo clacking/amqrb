@@ -3,7 +3,7 @@ import path from 'path';
 import os from 'os';
 import { app, BrowserWindow, ipcMain, shell, Menu, protocol } from 'electron';
 import serve from 'electron-serve';
-import { nextServer } from './helper/nextServer';
+import { devServer } from './helper/devServer';
 import { fetchAniListUserToken, fetchAniListAccsessToken, fetchUserByAccsess } from './helper/fetchAnilistUser';
 import { bootstrapAMQGame } from './helper/AMQCore';
 import { SETTING_PATH, VIDEO_CACHE, userConfig, loadConfig } from './helper/AppSettings';
@@ -81,7 +81,7 @@ async function main() {
         mainWindow.webContents.once('did-frame-finish-load', () => {
             mainWindow.webContents.openDevTools();
         });
-        webview_page = await nextServer();
+        webview_page = await devServer();
     } else {
         await appServe(mainWindow);
         webview_page = 'app://-';

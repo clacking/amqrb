@@ -6,9 +6,9 @@ import currentListSlice from '../store/listSlice';
 import { useDispatch } from 'react-redux';
 import { AuthContext } from '../components/AnilistAuth';
 
-const SavedData = dynamic(() => import('./datas'), {ssr: false});
-const UserAnimes = dynamic(() => import('./userlist'), {ssr: false});
-const Login = dynamic(() => import('../components/login'), {ssr: false});
+import SavedData from './datas';
+import UserAnimes from './userlist';
+import Login from '../components/login';
 
 const updateChangeQuery = gql`
 mutation ($mediaId: Int, $status: MediaListStatus) {
