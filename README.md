@@ -1,6 +1,6 @@
 # AMQRedBook
 
-![client image](https://user-images.githubusercontent.com/37972714/110617931-91dd0700-81d9-11eb-90d6-1d6d22198d4a.png)
+![client image](https://user-images.githubusercontent.com/37972714/113507847-cdc07d80-9587-11eb-888f-0810046259aa.png)
 
 Custom [AMQ](https://animemusicquiz.com/) client.
 
