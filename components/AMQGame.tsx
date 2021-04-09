@@ -16,7 +16,8 @@ const MainUI = styled.main`
 `;
 
 const GameContainer = styled.section`
-    width: calc(100% - 200px);
+    width: 100%;
+    height: calc(100% - 1.5rem);
     display: flex;
 `
 
@@ -77,7 +78,7 @@ const AMQGame = () => {
 
     return (
         <GameViewContext.Provider value={{view, changeView: change}}>
-            <MainUI id="AMQGameUI" className="h-full w-full flex">
+            <MainUI id="AMQGameUI" className="h-full w-full flex flex-col-reverse">
                 <AMQStatus />
                 <GameContainer>
                     {

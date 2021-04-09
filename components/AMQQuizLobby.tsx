@@ -61,6 +61,7 @@ const AMQQuiz = () => {
         <div className="w-full h-full flex flex-col">
             <header className="flex w-full p-2 justify-between">
                 <div>
+                    <span className="font-extrabold text-lg pr-2">Lobby</span>
                     <button onClick={backLobby} className="px-4 py-1 border">Back</button>
                     <span className="mx-2">
                         <span>

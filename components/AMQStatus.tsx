@@ -22,7 +22,7 @@ const CharaImg = styled.img`
 
 const EXPProgressBar = styled.div`
     width: 100%;
-    height: 30px;
+    height: 100%;
     background: grey;
     color: #fff;
     line-height: 30px;
@@ -31,15 +31,16 @@ const EXPProgressBar = styled.div`
 
 const EXPLevel = styled.div`
     width: 100%;
-    height: 30px;
+    height: 100%;
+    text-align: center;
     position: relative;
     z-index: 4;
 
 `;
 
 const EXPProgress = styled.div<{p: string}>`
+    height: 100%;
     background: green;
-    height: 30px;
     position: absolute;
     top: 0;
     transition: width 0.4s ease-in-out;
@@ -82,7 +83,7 @@ const OnlineCounter = () => {
     });
 
     return (
-        <span className="ml-auto inline-flex"><FaUsers /> {online}</span>
+        <span className="ml-auto inline-flex leading-4"><FaUsers /> {online}</span>
     );
 }
 
@@ -94,28 +95,28 @@ const AMQStatusBar = () => {
     const img = getAvatar(state.avatar);
 
     return (
-        <div className="w-full h-12 bg-gray-800 flex flex-row justify-between">
+        <div className="w-full h-6 leading-6 bg-gray-800 flex flex-row justify-between">
             <div className="flex items-center text-sm p-2 select-none space-x-4">
                 <ConnectionStatus />
                 <OnlineCounter />
             </div>
-            <div>
-                <span className="text-2xl py-2">{ state.self }</span>
+            <div className="flex flex-row w-1/3">
+                <span className="text-md px-2">{ state.self }</span>
                 <EXPProgressBar>
                     <Tooltip label={`${state.xpInfo.xpIntoLevel|0} / ${state.xpInfo.xpForLevel}`} aria-label="A tooltip">
                         <EXPLevel>{state.level}</EXPLevel>
                     </Tooltip>
                     <EXPProgress p={`${state.xpInfo.xpPercent * 100}`} />
                 </EXPProgressBar>
-                <span className="px-2 py-1 m-2 rounded bg-blue-900"><FaTicketAlt /> {state.tickets} </span>
-                <span className="px-2 py-1 m-2 rounded bg-blue-900">♬ {state.credits}</span>
+                <span className="text-md mx-2 rounded">Tickets:{state.tickets}</span>
+                <span className="text-md mx-2 rounded">Credits:{state.credits}</span>
             </div>
             <div className="flex justify-between">
-                <span className="leading-4 p-2 m-2 border border-gray-600 hover:border-gray-400 rounded-sm cursor-pointer">
-                    <FaSignOutAlt />
+                <span className="leading-4 p-1 mx-1 hover:bg-gray-500 cursor-pointer">
+                    <FaSignOutAlt className="text-sm leading-3" />
                 </span>
-                <span className="leading-4 p-2 m-2 border border-gray-600 hover:border-gray-400 rounded-sm cursor-pointer">
-                    <FaRegSun />
+                <span className="leading-4 p-1 mx-1 hover:bg-gray-500 cursor-pointer">
+                    <FaRegSun className="text-sm leading-3" />
                 </span>
             </div>
         </div>
@@ -165,4 +166,4 @@ const AMQStatus = () => {
     )
 }
 
-export default AMQStatus;
+export default AMQStatusBar;

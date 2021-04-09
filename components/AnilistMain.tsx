@@ -1,4 +1,3 @@
-import dynamic from 'next/dynamic';
 import { useState, useEffect, useContext } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { useAnilistChangeState } from '../store/selectors';

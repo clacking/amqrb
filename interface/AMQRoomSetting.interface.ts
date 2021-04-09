@@ -15,7 +15,9 @@ export type RoomSetting = {
         skipReplay: boolean,
         duplicates: boolean,
         queueing: boolean,
-        lootDropping: boolean
+        lootDropping: boolean,
+        rebroadcastSongs: boolean,
+        dubSongs: boolean,
     },
     songSelection: {
         standardValue: number,
@@ -37,6 +39,12 @@ export type RoomSetting = {
             inserts: number,
             random: number
         }
+    },
+    insertTypes: {
+        instrumental: boolean,
+        chanting: boolean,
+        character: boolean,
+        standard: boolean
     },
     guessTime: {
         randomOn: boolean,

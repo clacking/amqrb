@@ -1,5 +1,5 @@
 import { useState, useContext, useRef } from 'react';
-import { useFormik } from 'formik';
+import { useForm } from 'react-hook-form';
 import { Button, ButtonGroup, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react"
 import { GameViewContext } from './AMQGame';
 import { RoomSetting } from '../interface/AMQRoomSetting.interface';
@@ -18,7 +18,9 @@ const DefaultRoomValues: RoomSetting = {
         skipReplay: true,
         duplicates: true,
         queueing: false,
-        lootDropping: true
+        lootDropping: true,
+        rebroadcastSongs: true,
+        dubSongs: true,
     },
     songSelection: {
         standardValue: 3,
@@ -40,6 +42,12 @@ const DefaultRoomValues: RoomSetting = {
             inserts: 0,
             random: 20
         }
+    },
+    insertTypes: {
+        instrumental: true,
+        chanting: true,
+        character: true,
+        standard: true
     },
     guessTime: {
         randomOn: false,
@@ -151,7 +159,7 @@ const DefaultRoomValues: RoomSetting = {
         standardValue: {
             years: [
                 1944,
-                2020
+                2021
             ],
             seasons: [
                 0,
@@ -175,13 +183,18 @@ const DefaultRoomValues: RoomSetting = {
 const Form = ({submit}: {submit: (val: RoomSetting, solo: boolean) => void}) => {
     const obj = {...DefaultRoomValues};
     const [solo, setSolo] = useState(false);
-    const form = useFormik({
-        initialValues: obj,
-        onSubmit: val => submit(val, solo)
-    });
+
+    const { register, handleSubmit } = useForm<RoomSetting>({ defaultValues: DefaultRoomValues });
+    const onSubmit = (val: RoomSetting) => {
+        const setting = {...DefaultRoomValues, ...val};
+        // Add required options
+        setting.guessTime.randomValue = [5, 60];
+        setting.songDifficulity.advancedValue = [0, 50];
+        submit(setting, solo);
+    }
 
     return (
-        <form className="text-center text-black" onSubmit={form.handleSubmit}>
+        <form className="text-center text-black" onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-2xl">Create Room</h1>
             <div>
                 <span>Solo room?</span>
@@ -190,59 +203,68 @@ const Form = ({submit}: {submit: (val: RoomSetting, solo: boolean) => void}) => 
             { solo ? '' : <>
             <div>
                 Room name
-                <input className="p-2 border" id="text-input" placeholder="Room name" name="roomName" value={form.values.roomName} onChange={form.handleChange} type="text" />
+                <input className="p-2 border" id="text-input" placeholder="Room name" {...register('roomName')} type="text" />
             </div>
             <div>
                 Password
-                <input className="p-2 border" id="text-input" placeholder="Set to private room" name="password" value={form.values.password} onChange={form.handleChange} type="text" />
+                <input className="p-2 border" id="text-input" placeholder="Set to private room" {...register('password')} type="text" />
             </div>
             <div>
                 <p>Room size</p>
-                <input name="roomSize" value={form.values.roomSize} onChange={form.handleChange} type="number" min={1} max={8} step={1} />
-                <input name="roomSize" value={form.values.roomSize} onChange={form.handleChange} type="range" min={1} max={8} step={1} />
+                <input {...register('roomSize')} type="number" min={1} max={8} step={1} />
+                <input {...register('roomSize')} type="range" min={1} max={8} step={1} />
             </div>
             <div>
                 <p>Team size</p>
-                <input name="teamSize" value={form.values.teamSize} onChange={form.handleChange} type="number" min={1} max={8} step={1} />
-                <input name="teamSize" value={form.values.teamSize} onChange={form.handleChange} type="range" min={1} max={8} step={1} />
+                <input {...register('teamSize')} type="number" min={1} max={8} step={1} />
+                <input {...register('teamSize')} type="range" min={1} max={8} step={1} />
             </div>
             </>}
             <div>
                 <p>Guess Time</p>
-                <input name="guessTime.standardValue" value={form.values.guessTime.standardValue} onChange={form.handleChange} type="number" min={5} max={60} step={5} />
-                <input name="guessTime.standardValue" value={form.values.guessTime.standardValue} onChange={form.handleChange} type="range" min={5} max={60} step={5} />
+                <input {...register('guessTime.randomOn')} value="false" type="hidden" />
+                <input {...register('guessTime.standardValue')} type="number" min={5} max={60} step={5} />
+                <input {...register('guessTime.standardValue')} type="range" min={5} max={60} step={5} />
+                <input {...register('guessTime.randomValue')} value="false" type="hidden" />
             </div>
             <div>
                 <p>Song Selection</p>
                 <div className="flex flex-row mx-auto">
                     <span>
                         op
-                        <input name="songType.standardValue.openings" value="false" checked={form.values.songType.standardValue.openings} onChange={form.handleChange} type="checkbox" />
+                        <input {...register('songType.standardValue.openings')} value="false" type="checkbox" />
                     </span>
                     <span>
                         ed
-                        <input name="songType.standardValue.endings" value="false" checked={form.values.songType.standardValue.endings} onChange={form.handleChange} type="checkbox" />
+                        <input {...register('songType.standardValue.endings')} value="false" type="checkbox" />
                     </span>
                     <span>
                         ins
-                        <input name="songType.standardValue.inserts" value="false" checked={form.values.songType.standardValue.inserts} onChange={form.handleChange} type="checkbox" />
+                        <input {...register('songType.standardValue.inserts')} value="false" type="checkbox" />
                     </span>
+                    <div>
+                        <input {...register('songType.advancedValue.openings')} value="false" type="hidden" />
+                        <input {...register('songType.advancedValue.endings')} value="false" type="hidden" />
+                        <input {...register('songType.advancedValue.inserts')} value="false" type="hidden" />
+                        <input {...register('songType.advancedValue.random')} value="false" type="hidden" />
+                    </div>
                 </div>
             </div>
             <div>
                 <p>Song Difficulty</p>
                 <div className="flex flex-row mx-auto">
+                    <input {...register('songDifficulity.advancedOn')} value="false" type="hidden" />
                     <span>
                         easy
-                        <input name="songDifficulity.standardValue.easy" value="false" checked={form.values.songDifficulity.standardValue.easy} onChange={form.handleChange} type="checkbox" />
+                        <input {...register('songDifficulity.standardValue.easy')} value="false" type="checkbox" />
                     </span>
                     <span>
                         medium
-                        <input name="songDifficulity.standardValue.medium" value="false" checked={form.values.songDifficulity.standardValue.medium} onChange={form.handleChange} type="checkbox" />
+                        <input {...register('songDifficulity.standardValue.medium')} value="false" type="checkbox" />
                     </span>
                     <span>
                         hard
-                        <input name="songDifficulity.standardValue.hard" value="false" checked={form.values.songDifficulity.standardValue.hard} onChange={form.handleChange} type="checkbox" />
+                        <input {...register('songDifficulity.standardValue.hard')} value="false" type="checkbox" />
                     </span>
                 </div>
             </div>
@@ -266,6 +288,7 @@ const AMQRoomSetting = ({isOpen, onClose, editable}:
             setting.roomSize = 1;
             setting.privateRoom = false;
         }
+        console.log(setting);
         changeView('lobby');
         window.electron.send('amqEmit', {
             command, data: setting, type: roombrowser

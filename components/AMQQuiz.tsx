@@ -259,7 +259,7 @@ const AnswerBox = ({songs, phase, songCount}:
 
 const AMQQuiz = () => {
     const { changeView } = useContext(GameViewContext);
-    const { chat, quizInitial, setting, spectator, isHost } = useContext(GameContext);
+    const { chat, quizInitial, setting, spectator, isHost, gameId } = useContext(GameContext);
     if (!quizInitial) return <div>waiting gamestart</div>;
 
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -342,6 +342,7 @@ const AMQQuiz = () => {
         <div className="w-full h-full flex flex-col">
             <header className="flex w-full p-2 justify-between">
                 <div>
+                    <span className="font-extrabold text-lg pr-2">Quiz</span>
                     <button onClick={leave} className="px-4 py-1 mr-2 border">Leave</button>
                     { isHost && (
                     <>
@@ -349,6 +350,16 @@ const AMQQuiz = () => {
                     <button onClick={lobbyVote} className="px-1 py-1 border">Lobby</button>
                     </>
                     )}
+                    <span className="mx-2">
+                        <span>
+                            #{gameId} {setting.roomName} ({player.length}/{setting.roomSize})
+                        </span>
+                        { setting.teamSize>1 &&
+                        <span className="ml-2">
+                            {`(TeamSize: ${setting.teamSize})`}
+                        </span>
+                        }
+                    </span>
                 </div>
                 <div>
                     {songCount}

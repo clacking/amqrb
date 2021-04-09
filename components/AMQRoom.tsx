@@ -137,8 +137,9 @@ const AMQRoom = () => {
     });
 
     return (
-        <div className="flex w-full h-full overflow-auto mb-2">
+        <div className="flex w-full flex-grow overflow-auto">
             <header className="fixed">
+                <span className="font-extrabold text-lg p-2">Room List</span>
                 <button className="p-2 m-2 border cursor-pointer" onClick={backLobby}>back</button>
                 <span className="mx-2">
                     {rooms.length} rooms ({publicRooms} public, {rooms.length-publicRooms} private)
