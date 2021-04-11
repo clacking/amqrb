@@ -184,7 +184,7 @@ const Form = ({submit}: {submit: (val: RoomSetting, solo: boolean) => void}) => 
     const obj = {...DefaultRoomValues};
     const [solo, setSolo] = useState(false);
 
-    const { register, handleSubmit } = useForm<RoomSetting>({ defaultValues: DefaultRoomValues });
+    const { register, watch, handleSubmit } = useForm<RoomSetting>({ defaultValues: DefaultRoomValues });
     const onSubmit = (val: RoomSetting) => {
         const setting = {...DefaultRoomValues, ...val};
         // Add required options
@@ -192,6 +192,10 @@ const Form = ({submit}: {submit: (val: RoomSetting, solo: boolean) => void}) => 
         setting.songDifficulity.advancedValue = [0, 50];
         submit(setting, solo);
     }
+
+    const watchRoomSize = watch('roomSize');
+    const watchTeamSize = watch('teamSize');
+    const watchGuessTime = watch('guessTime.standardValue');
 
     return (
         <form className="text-center text-black" onSubmit={handleSubmit(onSubmit)}>
@@ -203,7 +207,7 @@ const Form = ({submit}: {submit: (val: RoomSetting, solo: boolean) => void}) => 
             { solo ? '' : <>
             <div>
                 Room name
-                <input className="p-2 border" id="text-input" placeholder="Room name" {...register('roomName')} type="text" />
+                <input className="p-2 border" id="text-input" placeholder="Room name" {...register('roomName', { required: true })} type="text" />
             </div>
             <div>
                 Password
@@ -211,19 +215,19 @@ const Form = ({submit}: {submit: (val: RoomSetting, solo: boolean) => void}) => 
             </div>
             <div>
                 <p>Room size</p>
-                <input {...register('roomSize')} type="number" min={1} max={8} step={1} />
+                { watchRoomSize }
                 <input {...register('roomSize')} type="range" min={1} max={8} step={1} />
             </div>
             <div>
                 <p>Team size</p>
-                <input {...register('teamSize')} type="number" min={1} max={8} step={1} />
+                { watchTeamSize }
                 <input {...register('teamSize')} type="range" min={1} max={8} step={1} />
             </div>
             </>}
             <div>
                 <p>Guess Time</p>
                 <input {...register('guessTime.randomOn')} value="false" type="hidden" />
-                <input {...register('guessTime.standardValue')} type="number" min={5} max={60} step={5} />
+                { watchGuessTime }
                 <input {...register('guessTime.standardValue')} type="range" min={5} max={60} step={5} />
                 <input {...register('guessTime.randomValue')} value="false" type="hidden" />
             </div>

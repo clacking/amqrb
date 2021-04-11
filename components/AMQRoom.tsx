@@ -8,6 +8,20 @@ import { GameViewContext } from './AMQGame';
 import { roombrowser, NewRoom, RoomChange, RemoveRoombrowserListeners } from '../helper/AMQEvents';
 import { getAvatar, getBackground } from '../helper/AvatarImage';
 
+const getGameModeName = (setting: RoomSetting) => {
+    const { scoreType, showSelection } = setting;
+    if (showSelection === 2)
+        return 'Battle Royal';
+    else if (scoreType === 1)
+        return 'Standard';
+    else if (scoreType === 2)
+        return 'Quick Draw';
+    else if (scoreType === 3)
+        return 'Last Man Standing';
+    else
+        return '? Unknown ?';
+}
+
 const RoomBox = (roomSettings: PublicRoomSettings) => {
     const {
         id, host, hostAvatar, players, numberOfPlayers,
@@ -18,6 +32,9 @@ const RoomBox = (roomSettings: PublicRoomSettings) => {
             //
         }
     }
+
+    // Game mode detection
+    const gameMode = getGameModeName(settings);
 
     return (
         <div className="bg-gray-800 border-gray-700 border-opacity-80 bg-opacity-80 rounded border p-2 m-2 w-40 h-72 text-center flex flex-col">
@@ -31,7 +48,7 @@ const RoomBox = (roomSettings: PublicRoomSettings) => {
             <div className="h-32 mx-auto w-full bg-center bg-auto shadow-inner relative" style={{ backgroundImage: `url(${getBackground(hostAvatar, 'hori')})` }}>
                 <p className="truncate absolute left-0 top-0 bg-gray-800 bg-opacity-80">{host}</p>
                 <p className="text-left"><img className="h-32" loading="lazy" src={getAvatar(hostAvatar)} /></p>
-                <p className="absolute right-0 bottom-0 bg-gray-800 bg-opacity-80">{settings.gameMode}</p>
+                <p className="absolute right-0 bottom-0 bg-gray-800 bg-opacity-80">{gameMode}</p>
             </div>
             <p><FaUsers /> {numberOfPlayers} / {settings.roomSize}</p>
             <p>
@@ -123,6 +140,7 @@ const AMQRoom = () => {
         changeView('default');
     }
 
+    // Search filter
     const publicRooms = rooms.filter(d => !d.settings.privateRoom ).length;
     const filteredRooms = rooms.filter(d => {
         const lkw = kw.toLowerCase();
