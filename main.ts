@@ -8,6 +8,7 @@ import { fetchAniListUserToken, fetchAniListAccsessToken, fetchUserByAccsess } f
 import { bootstrapAMQGame } from './helper/AMQCore';
 import { SETTING_PATH, VIDEO_CACHE, userConfig, loadConfig } from './helper/AppSettings';
 import { getDatabase } from './helper/Database';
+import { getDevtoolsPath } from './helper/Extension';
 
 const DEV_SERVER = process.env.APP_ENV !== 'production';
 const appServe = serve({directory: 'build'});
@@ -75,9 +76,10 @@ async function main() {
 
     let webview_page: string;
     if (DEV_SERVER) {
-        mainWindow.webContents.session.loadExtension(
-            path.join(os.homedir(), `AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.10.1_0`)
-        );
+        const devtool = await getDevtoolsPath();
+        if (devtool) {
+            await mainWindow.webContents.session.loadExtension(devtool);
+        }
         mainWindow.webContents.once('did-frame-finish-load', () => {
             mainWindow.webContents.openDevTools();
         });
