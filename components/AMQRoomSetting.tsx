@@ -186,7 +186,7 @@ const Form = ({submit}: {submit: (val: RoomSetting, solo: boolean) => void}) => 
 
     const { register, watch, handleSubmit } = useForm<RoomSetting>({ defaultValues: DefaultRoomValues });
     const onSubmit = (val: RoomSetting) => {
-        const setting = {...DefaultRoomValues, ...val};
+        const setting = {...obj, ...val};
         // Add required options
         setting.guessTime.randomValue = [5, 60];
         setting.songDifficulity.advancedValue = [0, 50];

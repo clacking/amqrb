@@ -1,6 +1,3 @@
-/// <reference types="next" />
-/// <reference types="next/types/global" />
-
 import Electron, { IpcRenderer, IpcRendererEvent } from 'electron';
 import { AMQEventsCommand, QuizNextVideoInfo } from './helper/AMQEvents';
 import { UserStatus } from './store/userStatusSlice';
