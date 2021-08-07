@@ -30,6 +30,7 @@ const DefaultRoomValues: RoomSetting = {
             random: 0
         }
     },
+    watchedDistribution: 1,
     songType: {
         standardValue: {
             openings: true,
@@ -293,7 +294,7 @@ const AMQRoomSetting = ({isOpen, onClose, editable}:
             setting.privateRoom = false;
         }
         console.log(setting);
-        changeView('lobby');
+        changeView!('lobby');
         window.electron.send('amqEmit', {
             command, data: setting, type: roombrowser
         });

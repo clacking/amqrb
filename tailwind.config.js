@@ -5,5 +5,8 @@ module.exports = {
             opacity: ['disabled'],
             cursor: ['disabled']
         }
-    }
+    },
+    plugins: [
+        require('daisyui')
+    ]
 }

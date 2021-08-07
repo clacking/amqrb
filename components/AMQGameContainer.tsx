@@ -142,7 +142,7 @@ const AMQGameContainer = () => {
     useEffect(() => {
         const gameStart = (e: any, d: IGameStarting) => {
             setQuizInitial(d);
-            changeView('quiz');
+            changeView!('quiz');
         }
         window.electron.on(GameStarting, gameStart);
 
@@ -154,7 +154,7 @@ const AMQGameContainer = () => {
     // QuizOver
     useEffect(() => {
         const quizOver = (e: any, d: any) => {
-            changeView('lobby');
+            changeView!('lobby');
         }
         window.electron.on(QuizOver, quizOver);
 

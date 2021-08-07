@@ -43,6 +43,12 @@ export interface ISongInfo {
             720?: string;
         };
     };
+    siteIds: {
+        annId: number,
+        malId: number,
+        kitsuId: number,
+        aniListId: number,
+    };
 }
 
 /**

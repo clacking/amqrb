@@ -9,6 +9,7 @@ import { bootstrapAMQGame } from './helper/AMQCore';
 import { SETTING_PATH, VIDEO_CACHE, userConfig, loadConfig } from './helper/AppSettings';
 import { getDatabase } from './helper/Database';
 import { getDevtoolsPath } from './helper/Extension';
+import { initializeDiscord } from './helper/Discord';
 
 const DEV_SERVER = process.env.APP_ENV !== 'production';
 const appServe = serve({directory: 'build'});
@@ -90,6 +91,7 @@ async function main() {
     }
 
     const db = await getDatabase();
+    await initializeDiscord();
     bootstrapAMQGame();
     await mainWindow.loadURL(webview_page);
 

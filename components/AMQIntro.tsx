@@ -18,14 +18,14 @@ const AMQIntro = () => {
     const [disabled, setDisabled] = useState(false);
 
     const browseRoom = () => {
-        changeView('rooms');
+        changeView!('rooms');
         window.electron.send('amqEmit', {
             type: roombrowser, command: GetRooms
         });
     }
 
     const joinRanked = () => {
-        changeView('quiz');
+        changeView!('quiz');
         window.electron.send('amqEmit', {
             type: roombrowser, command: JoinRankedGame
         });

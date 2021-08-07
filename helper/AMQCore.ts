@@ -8,15 +8,12 @@ import { LoginComplete, PlayerCount, ServerRestart, PopoutMessage,
 import { UserState } from './AMQ.interface';
 import { addCommandHandler, initilizeGameSocket, emitEvent, coreEmitter, getGameSocket } from './AMQSocket';
 import { Logger } from './Logger';
-import { createGameRoom } from './AMQRoom';
-import { browseRooms } from './AMQBrowser';
-import { initializeChat } from './AMQChat';
 import { quizGame } from './AMQQuiz';
 
 const AMQ_ENDPOINT = 'https://animemusicquiz.com';
 
 // Shared states/vars
-export let CookieJar: string | null;
+export let CookieJar: string | undefined;
 
 /**
  * Fetch accsess token for Game Socket

@@ -18,7 +18,7 @@ const AppSetting = () => {
                             <select className="mr-1 text-black">
                                 { PROXYTYPE.map((t, k) => <option key={k} value={t}>{t.toUpperCase()}</option>) }
                             </select>
-                            <input className="text-black w-full" type="text" placeholder="http://user:pw@addr:port" />
+                            <input className="text-black w-full" type="text" placeholder="IP:PORT:user:password" />
                         </span>
                     </div>
                     <div className="w-full flex">
@@ -26,7 +26,7 @@ const AppSetting = () => {
                             Proxy direction
                         </span>
                         <span className="w-1/2 flex">
-                            <span>Socket <input type="checkbox" /></span>
+                            <span>Game connection <input type="checkbox" /></span>
                             <span>CDN <input type="checkbox" /></span>
                         </span>
                     </div>
@@ -39,6 +39,13 @@ const AppSetting = () => {
                     </div>
                     <div className="w-full flex">
                         <span className="w-1/2 flex">Store cache (Use lots of storage.)</span>
+                        <input type="checkbox" />
+                    </div>
+                </div>
+                <div>
+                    <h2 className="text-xl">Game</h2>
+                    <div className="w-full flex">
+                        <span className="w-1/2 flex">Force NO auto disconnect</span>
                         <input type="checkbox" />
                     </div>
                 </div>

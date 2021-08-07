@@ -38,8 +38,8 @@ const RoomBox = (roomSettings: PublicRoomSettings) => {
 
     return (
         <div className="bg-gray-800 border-gray-700 border-opacity-80 bg-opacity-80 rounded border p-2 m-2 w-40 h-72 text-center flex flex-col">
-            <div className="flex justify-between">
-                <span className="opacity-60">ID: {id}</span>
+            <div className="flex justify-between text-xs">
+                <span className="opacity-60">#{id}</span>
                 <span className="select-none">{settings.privateRoom ? '🔒' : '🚪'}</span>
             </div>
             <Tooltip label={ settings.roomName || 'no name' }>
@@ -51,10 +51,10 @@ const RoomBox = (roomSettings: PublicRoomSettings) => {
                 <p className="absolute right-0 bottom-0 bg-gray-800 bg-opacity-80">{gameMode}</p>
             </div>
             <p><FaUsers /> {numberOfPlayers} / {settings.roomSize}</p>
-            <p>
-                {settings.songType.standardValue.openings ? ' OP ' : ' '}
-                {settings.songType.standardValue.endings ? ' ED' : ' '}
-                {settings.songType.standardValue.inserts ? ' Insert' : ' '}
+            <p className="text-sm">
+                { settings.songType.standardValue.openings && <span className="badge select-none m-0.5">OP</span>}
+                { settings.songType.standardValue.endings && <span className="badge select-none m-0.5">ED</span>}
+                { settings.songType.standardValue.inserts && <span className="badge select-none m-0.5">Insert</span>}
             </p>
             <p>[view settings]</p>
             <div className="w-full flex">
@@ -117,9 +117,6 @@ const AMQRoom = () => {
                     setRooms(rooms.filter(r => r.id !== d.roomId));
                     break;
                 }
-                case 'players': {
-                    break;
-                }
                 default: {
                     break; // Host room closed
                 }
@@ -137,7 +134,7 @@ const AMQRoom = () => {
 
     const backLobby = () => {
         window.electron.send('amqEmit', { command: RemoveRoombrowserListeners, type: roombrowser });
-        changeView('default');
+        changeView!('default');
     }
 
     // Search filter

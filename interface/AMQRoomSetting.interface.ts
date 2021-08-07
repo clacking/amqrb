@@ -27,6 +27,7 @@ export type RoomSetting = {
             random: number
         }
     },
+    watchedDistribution: 1 | 2,
     songType: {
         standardValue: {
             openings: boolean,

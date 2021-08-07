@@ -27,7 +27,7 @@ type GameViewType = {
     changeView: (view: GameViews) => void
 };
 export const GameViewContext =
-    createContext<GameViewType>({} as GameViewType);
+    createContext<Partial<GameViewType>>({});
 
 const AMQGame = () => {
     const dispatch = useDispatch();

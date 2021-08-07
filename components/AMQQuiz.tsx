@@ -54,36 +54,43 @@ const QuizInfomationBox = ({phase, songCount, answer}: {phase: QuizPhases, songC
     )
 }
 
-const VideoPlayer = ({src, phase, playLength=0, startPoint=0, volume=0.5, play}:
-    {src?: string, phase: QuizPhases, playLength?: number, startPoint?: number, volume?: number, play: boolean}
+const VideoPlayer = ({src, phase, playLength=0, startPoint=0, volume=0.5, play, playRate=1}:
+    {src?: string, phase: QuizPhases, playLength?: number, startPoint?: number, volume?: number, play: boolean, playRate?: number}
 ) => {
     const ref = useRef<HTMLVideoElement>(null);
+    const [loaded, setLoaded] = useState(false);
+    const [invisible, setInvisible] = useState(false);
 
     useEffect(() => {
         ref.current!.src = src || '';
     }, [src]);
 
     useEffect(() => {
-        if (phase==='pregame') {
-            ref.current!.pause();
+        setInvisible(phase==='guess' || phase==='guessover' || !play);
+        if (loaded && ref.current) {
+            const startPercent = startPoint / 100;
+            const timeAdjust = ref.current.duration - ((playLength + 13) * playRate);
+            const bufferLength = timeAdjust < 0 ? 0 : timeAdjust;
+            const time = bufferLength * startPercent;
+            if (phase==='pregame') {
+                ref.current.pause();
+            }
+            if (phase==='guess' || phase==='result') {
+                ref.current.pause();
+                ref.current.currentTime = isFinite(time) ? Math.floor(time) : 0;
+                if (play) ref.current.play();
+            }
         }
-        if (phase==='guess' || phase==='result') {
-            const timeAdjust = ref.current!.duration-(playLength-13);
-            const time = ( timeAdjust<0 ? 0 : timeAdjust ) * startPoint/100;
-            ref.current!.pause();
-            ref.current!.currentTime = isFinite(time) ? Math.floor(time) : 0;
-            if (play) ref.current!.play();
-        }
-    }, [phase, play]);
+    }, [phase, play, loaded]);
 
     useEffect(() => {
         ref.current!.volume = volume;
     }, [volume]);
 
-    const invisible = phase==='guess' || phase==='guessover' || !play;
+    const videoLoaded = () => setLoaded(true);
 
     return (
-        <video className={`w-full h-full absolute z-0 ${invisible&&'invisible'}`} ref={ref} controls={false}>
+        <video className={`w-full h-full absolute z-0 ${invisible && 'invisible'}`} ref={ref} controls={false} onLoadedMetadata={videoLoaded}>
             <span>Sound Only</span>
         </video>
     );
@@ -310,7 +317,7 @@ const AMQQuiz = () => {
         window.electron.on(QuizWaitingBuffering, buffer);
 
         const gameover = (e: any, d: any) => {
-            changeView('lobby');
+            changeView!('lobby');
         }
         window.electron.on(QuizOver, gameover);
 
@@ -332,7 +339,7 @@ const AMQQuiz = () => {
 
     const leave = () => {
         window.electron.send('amqEmit', { command: LeaveGame, type: lobby });
-        changeView('default');
+        changeView!('default');
     }
 
     const pauseVote = () => {}
@@ -369,6 +376,7 @@ const AMQQuiz = () => {
                     <button className="border px-4 py-1 mx-1">History</button>
                     <button onClick={onOpen} className="border px-4 py-1 mx-1">Setting</button>
                     <button className="border px-4 py-1 mx-1">Spectators ({spectator.length})</button>
+                    <button className="border px-4 py-1 mx-1">Chat</button>
                 </div>
             </header>
             <main className="w-full h-full flex flex-grow justify-between flex-col xl:flex-row p-4">

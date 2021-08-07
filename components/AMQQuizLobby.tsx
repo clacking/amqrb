@@ -43,7 +43,7 @@ const AMQQuiz = () => {
     const [ready, setReady] = useState(false);
 
     const backLobby = () => {
-        changeView('default');
+        changeView!('default');
         window.electron.send('amqEmit', { command: LeaveGame, type: lobby });
     }
 
