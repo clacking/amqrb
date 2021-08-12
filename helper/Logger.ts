@@ -9,6 +9,9 @@ const logFormat = printf(({ level, message, label, timestamp }) => {
     return `[${timestamp}] ${label}: ${message}`;
 });
 
+// remove old logs
+export function logCleaner () {}
+
 export const Logger = createLogger({
     format: format.json(),
     transports: [

@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext, useRef } from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, ModalHeader, useDisclosure } from '@chakra-ui/react';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import { Rnd } from 'react-rnd';
 import { GameViewContext } from './AMQGame';
 import {
     quiz, lobby, GameStarting, QuizOver, RejoiningPlayer, SpectatorLeft, QuizNextVideoInfo,
@@ -12,13 +13,23 @@ import {
 
 } from '../helper/AMQEvents';
 import { GameContext } from './AMQGameContainer';
-import AMQChat from './AMQChat';
+import AMQChatBox from './AMQChatBox';
 import {
     AllSong, IAnswerResults, NextVideoInfo, IPlayerAnswers, IPlayerAnswer, IQuizAnswer, IQuizOverlayMessage, ISongInfo
 } from '../interface/AMQQuiz.interface';
 import { receiveMessageOnPort } from 'worker_threads';
 
 type QuizPhases = 'pregame' | 'guess' | 'guessover' | 'result' | 'gameover';
+
+const Video720p: React.CSSProperties = {
+    maxWidth: '1280px',
+    maxHeight: '720px'
+}
+
+const Video480p: React.CSSProperties = {
+    maxWidth: '640px',
+    maxHeight: '480px'
+}
 
 const AMQQuizContext = createContext({});
 
@@ -32,13 +43,13 @@ const QuizInfomationBox = ({phase, songCount, answer}: {phase: QuizPhases, songC
             <div className="w-16 grid place-content-center bg-purple-900 ">
                 { songCount }
             </div>
-            <div className="flex flex-col text-center w-full h-full">
+            <div className="flex flex-col flex-grow text-center h-full min-w-0">
                 { (phase==='result' && answer) ?
                 <span className="flex flex-col w-full">
-                    <span className="text-2xl">
+                    <span className="text-2xl truncate">
                         { answer.animeNames.romaji }
                     </span>
-                    <span>
+                    <span className="truncate">
                         { answer.artist } - { answer.songName }
                         {' '}
                         ({answer.type} {answer.typeNumber}) {answer.annId}
@@ -90,7 +101,7 @@ const VideoPlayer = ({src, phase, playLength=0, startPoint=0, volume=0.5, play, 
     const videoLoaded = () => setLoaded(true);
 
     return (
-        <video className={`w-full h-full absolute z-0 ${invisible && 'invisible'}`} ref={ref} controls={false} onLoadedMetadata={videoLoaded}>
+        <video style={{ width: '720px' }} className={`w-full h-full absolute z-0 ${invisible && 'invisible'}`} ref={ref} controls={false} onLoadedMetadata={videoLoaded}>
             <span>Sound Only</span>
         </video>
     );
@@ -134,6 +145,8 @@ const VideoOverlay = ({playLength, phase}:
     );
 }
 
+// Video player
+// TODO: remove preload
 const Video = ({songId, phase, songCount, volume}:
     {songId: number, phase: QuizPhases, songCount: number, volume: number}
 ) => {
@@ -245,7 +258,7 @@ const AnswerBox = ({songs, phase, songCount}:
     const copyAnswer = async () => await navigator.clipboard.writeText(answer);
 
     return (
-        <div className={`flex flex-row h-8 my-1 transition duration-500 text-white border border-white border-opacity-30 ${phase==='guess' ? 'bg-gray-900' : 'bg-gray-800'} p-1`}>
+        <div className={`flex flex-row h-8 my-1 transition duration-500 text-white border border-white border-opacity-30 ${phase==='guess' ? 'bg-gray-900' : 'bg-gray-700'} p-1`}>
             <button onClick={submitSkip}>{skip?'✔':''} Skip</button>
             <input className="flex flex-grow bg-transparent text-center" type="text"
                 value={answer} disabled={phase!=='guess'}
@@ -376,19 +389,16 @@ const AMQQuiz = () => {
                     <button className="border px-4 py-1 mx-1">History</button>
                     <button onClick={onOpen} className="border px-4 py-1 mx-1">Setting</button>
                     <button className="border px-4 py-1 mx-1">Spectators ({spectator.length})</button>
-                    <button className="border px-4 py-1 mx-1">Chat</button>
+                    <AMQChatBox chat={chat} />
                 </div>
             </header>
-            <main className="w-full h-full flex flex-grow justify-between flex-col xl:flex-row p-4">
-                <div className="flex flex-col flex-grow">
+            <section className="w-full flex flex-grow min-h-0 justify-between flex-col xl:flex-row p-4">
+                <div className="flex flex-col flex-grow min-h-0">
                     <QuizInfomationBox phase={phase} songCount={songCount} answer={result[songCount-1]?.songInfo} />
                     <Video songId={songCount} phase={phase} songCount={songCount} volume={volume} />
                     <AnswerBox songs={songs} phase={phase} songCount={songCount} />
                 </div>
-                <div className="px-2 h-1/2 xl:h-full w-full xl:w-1/3">
-                    <AMQChat chat={chat} />
-                </div>
-            </main>
+            </section>
 
             <Modal isOpen={isOpen} onClose={onClose} scrollBehavior='inside'>
                 <ModalOverlay />

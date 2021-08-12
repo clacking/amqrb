@@ -16,7 +16,7 @@ const AMQChat = ({chat, isTeam}: {chat: AMQChatMesasge[], isTeam?: boolean}) => 
     }
 
     return (
-        <div className="flex flex-col h-full p-2 border border-purple-700 border-opacity-60 bg-purple-900 bg-opacity-30 rounded-md">
+        <div className="flex flex-col h-full p-2 border border-purple-700 border-opacity-60 bg-purple-900 bg-opacity-70 rounded-md">
             <section className="flex flex-col flex-grow overflow-auto">
                 {chat.map(c => (
                     <div key={c.messageId}>
